@@ -1,0 +1,86 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis | InsightHire</title>
+</head>
+<body>
+    <h1>Candidate Analysis</h1>
+
+    <div>
+        <h2>{{ candidate.user.username }}</h2>
+        <p>Meeting Link: <a href="{{ candidate.meeting_link }}" target="_blank">{{ candidate.meeting_link }}</a></p>
+
+        <!-- Upload Audio -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+            <input type="file" name="audio_file" accept=".m4a" required>
+            <button type="submit" name="upload_audio">Upload Audio</button>
+        </form>
+
+        {% if candidate.audio_file %}
+        <p>Uploaded Audio: <a href="{{ candidate.audio_file.url }}" target="_blank">{{ candidate.audio_file.name }}</a></p>
+
+        <!-- Analyze Audio -->
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+            <button type="submit" name="analyze_audio">Analyze Audio</button>
+        </form>
+
+        <!-- ✅ Display Analysis Results -->
+        {% for recording in recordings %}
+        <div>
+            <h4>Audio Analysis Result:</h4>
+            <p>{{ recording.transcribed_text|linebreaks }}</p>
+        </div>
+        {% empty %}
+        <p>No audio analysis available.</p>
+        {% endfor %}
+        {% endif %}
+
+        <hr>
+
+        <!-- Upload Video -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+            <input type="file" name="video_file" accept=".mp4" required>
+            <button type="submit" name="upload_video">Upload Video</button>
+        </form>
+
+        {% if candidate.video_file %}
+        <p>Uploaded Video: <a href="{{ candidate.video_file.url }}" target="_blank">{{ candidate.video_file.name }}</a></p>
+
+        <!-- Analyze Video -->
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+            <button type="submit" name="analyze_video">Generate Heatmap</button>
+        </form>
+
+        <!-- Analyze Emotions -->
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+            <button type="submit" name="analyze_emotions">Analyze Emotions</button>
+        </form>
+
+        <!-- ✅ Display Heatmap if Available -->
+        {% if heatmap_path %}
+        <h4>Video Heatmap:</h4>
+        <img src="{{ heatmap_path }}" alt="Heatmap" style="max-width: 100%; height: auto;">
+        {% endif %}
+
+        <!-- ✅ Display Emotion Analysis if Available -->
+        {% if emotion_analysis %}
+        <h4>Emotion Analysis Report:</h4>
+        <p>{{ emotion_analysis|linebreaks }}</p>
+        {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>

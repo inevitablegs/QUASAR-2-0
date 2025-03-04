@@ -1,0 +1,5 @@
+groq==0.13.1
+pdfplumber==0.11.5
+requests==2.32.3
+django==5.1.6
+gunicorn==23.0.0

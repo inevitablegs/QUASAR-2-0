@@ -1,0 +1,107 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interviewer Dashboard | InsightHire</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+</head>
+<body>
+    {% load custom_filters %}
+    <div>
+        <h1>Interviewer Dashboard</h1>
+        <p>Manage your candidate resumes, interviews, and evaluations.</p>
+    </div>
+    
+    <!-- Candidate Resumes Section -->
+    <div>
+        <h2><i class="fas fa-users"></i> Candidate Resumes</h2>
+        
+        {% if resumes %}
+        <div>
+            {% for resume in resumes %}
+            <div>
+                <h3>
+                    <i class="fas fa-user"></i>
+                    {{ resume.user.username }}'s Resume
+                </h3>
+                
+                {% if resume.resume %}
+                <a href="{{ resume.resume.url }}">
+                    <i class="fas fa-download"></i> Download Resume
+                </a>
+                
+                <div>
+                    <!-- Form to generate questions -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="resume_id" value="{{ resume.id }}">
+                        <button type="submit" name="generate_questions">
+                            <i class="fas fa-brain"></i> Generate Questions
+                        </button>
+                    </form>
+                    
+                    <!-- Form to schedule a meeting -->
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="resume_id" value="{{ resume.id }}">
+                        <input type="datetime-local" name="start_time" required>
+                        <button type="submit" name="schedule_meeting">
+                            <i class="fas fa-calendar-plus"></i> Schedule Meeting
+                        </button>
+                    </form>
+                </div>
+                
+                {% if resume.meeting_link %}
+                <div>
+                    <i class="fas fa-video"></i> Meeting Link:
+                    <a href="{{ resume.meeting_link }}" target="_blank">
+                        {{ resume.meeting_link }}
+                    </a>
+                    
+                    <!-- Redirect to Analysis Page -->
+                    <form method="get" action="{% url 'interviewer_analysis' %}">
+                        <input type="hidden" name="resume_id" value="{{ resume.id }}">
+                        <button type="submit">
+                            <i class="fas fa-chart-line"></i> Analyze
+                        </button>
+                    </form>
+                    
+                </div>
+                {% endif %}
+                
+                
+                <!-- Display evaluation reports for the specific candidate -->
+                {% if evaluation_reports and resume.id|stringformat:"s" in evaluation_reports %}
+                <div>
+                    <i class="fas fa-file-alt"></i> Interview Analysis
+                    <div>
+                        {{ evaluation_reports|get_item:resume.id|linebreaks|safe }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Display generated questions for the specific candidate -->
+                {% if questions and resume.id|stringformat:"s" in questions %}
+                <div>
+                    <i class="fas fa-question-circle"></i> Generated Questions
+                    <div>
+                        {{ questions|get_item:resume.id|linebreaks|safe }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% else %}
+                <p>No resume uploaded.</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No candidate resumes available.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

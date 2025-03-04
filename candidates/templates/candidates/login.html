@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Login | InsightHire</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-text">InsightHire</span>
+            </a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links">
+                <a href="/candidates/">For Candidates</a>
+                <a href="/candidate/signup/" class="login-btn">Sign Up</a>
+            <!-- </div>
+            <div class="overlay"></div> -->
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Left Side - Welcome Banner -->
+            <div class="banner">
+                <div>
+                    <div class="logo">
+                        <span class="logo-text">InsightHire</span>
+                    </div>
+                    <h1>Welcome Back!</h1>
+                    <p>Log in to access your AI-powered interview insights and career opportunities.</p>
+                </div>
+                
+                <div class="benefits">
+                    <div class="benefit-item">
+                        <i class="fas fa-lock"></i>
+                        <span>&nbsp;Secure Account Access</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-user-check"></i>
+                        <span>&nbsp;Personalized Dashboard</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-briefcase"></i>
+                        <span>&nbsp;Job Matches & Recommendations</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-robot"></i>
+                        <span>&nbsp;AI Interview Practice Tools</span>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <a href="/privacy/">Privacy Policy</a> • 
+                    <a href="/terms/">Terms</a> • 
+                    <a href="/contact/">Help</a>
+                </div>
+            </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="form-section">
+                <div class="form-header">
+                    <h2>Sign In to Your Account</h2>
+                    <p>Enter your credentials to access your InsightHire dashboard</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+                        <div class="input-container">
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="error-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if field.errors %}
+                        <p class="error-message">{{ field.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    
+
+                    <div class="form-actions">
+                        <button type="submit">
+                            Login
+                        </button>
+                        
+                        <div class="signup-link">
+                            Don't have an account? 
+                            <a href="/candidate/signup/">
+                                Sign up here
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 InsightHire. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="/privacy/">Privacy Policy</a>
+                <a href="/terms/">Terms of Service</a>
+                <a href="/contact/">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for hamburger menu -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const overlay = document.querySelector('.overlay');
+            let lastScrollTop = 0;
+            
+            // Function to close the menu
+            function closeMenu() {
+                hamburger.classList.remove('open');
+                navLinks.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Toggle menu when hamburger is clicked
+            hamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+                overlay.classList.toggle('active');
+                
+                if (navLinks.classList.contains('open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close menu when clicking on a link
+            const links = document.querySelectorAll('.nav-links a');
+            links.forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (navLinks.classList.contains('open') && 
+                    !navLinks.contains(e.target) && 
+                    !hamburger.contains(e.target)) {
+                    closeMenu();
+                }
+            });
+            
+            // Close menu when overlay is clicked
+            overlay.addEventListener('click', closeMenu);
+            
+            // Close menu when scrolling
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (Math.abs(scrollTop - lastScrollTop) > 10 && navLinks.classList.contains('open')) {
+                    closeMenu();
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+        });
+    </script>
+</body>
+</html>

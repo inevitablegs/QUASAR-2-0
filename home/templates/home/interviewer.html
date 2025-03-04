@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Interviewers | InsightHire</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <style>
+        /* CSS Variables */
+        :root {
+            --heading-color: #0369a1;         
+            --theme-color: #0369a1; 
+        }
+        
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6eeff 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Navigation */
+        nav {
+            background-color: var(--theme-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nav-container {
+            width: 100%;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            z-index: 5;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.3px;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover {
+            color: #ecfdf5;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .login-btn {
+            background-color: #f97316;
+            padding: 0.5rem 1.25rem !important;
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: #ea580c !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+        }
+        
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            width: 30px;
+            height: 21px;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 3px;
+            width: 100%;
+            background: white;
+            border-radius: 3px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: .25s ease-in-out;
+        }
+        
+        .hamburger span:nth-child(1) {
+            top: 0px;
+        }
+        
+        .hamburger span:nth-child(2) {
+            top: 9px;
+        }
+        
+        .hamburger span:nth-child(3) {
+            top: 18px;
+        }
+        
+        .hamburger.open span:nth-child(1) {
+            top: 9px;
+            transform: rotate(135deg);
+        }
+        
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+        }
+        
+        .hamburger.open span:nth-child(3) {
+            top: 9px;
+            transform: rotate(-135deg);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .page-container {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            margin: 2rem 0;
+            padding: 2rem;
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .header-section h1 {
+            color: var(--heading-color);
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-section p {
+            color: #4B5563;
+            font-size: 1.1rem;
+        }
+        
+        .section {
+            padding: 1.5rem;
+            border-left: 5px solid var(--theme-color);
+            background: #f0f9ff;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h2 {
+            color: var(--heading-color);
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .section h2 i {
+            margin-right: 0.75rem;
+            color: #f97316;
+        }
+        
+        .section p, .section ul {
+            color: #4B5563;
+            line-height: 1.6;
+        }
+        
+        .section ul {
+            margin-left: 2rem;
+        }
+        
+        .section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .cta-button {
+            background-color: #f97316;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .cta-button i {
+            margin-right: 0.5rem;
+        }
+        
+        .cta-button:hover {
+            background-color: #ea580c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+        }
+        
+        .support-options {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .support-option {
+            display: flex;
+            align-items: center;
+            color: var(--heading-color);
+            font-weight: 500;
+        }
+        
+        .support-option i {
+            margin-right: 0.5rem;
+            color: #f97316;
+        }
+        
+        .support-option a {
+            color: var(--heading-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .support-option a:hover {
+            color: #f97316;
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--theme-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .footer-links a {
+            color: #dbeafe;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #f97316;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 250px;
+                height: auto;
+                background-color: #0ea5e9;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 80px 30px 30px;
+                transition: all 0.3s ease;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+                z-index: 4;
+                border-radius: 0 0 0 10px;
+                border-bottom: 3px solid #0369a1;
+                border-left: 3px solid #0369a1;
+            }
+            
+            .nav-links.open {
+                right: 0;
+            }
+            
+            .nav-links a {
+                margin: 0 0 1rem 0;
+                font-size: 1.2rem;
+                padding: 0.5rem 1rem;
+                width: 100%;
+                border-radius: 5px;
+                transition: all 0.3s;
+            }
+            
+            .nav-links a:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                transform: translateX(5px);
+            }
+            
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 3;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s;
+            }
+            
+            .overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .page-container {
+                padding: 1.5rem;
+            }
+            
+            .header-section h1 {
+                font-size: 1.75rem;
+            }
+            
+            .section {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-text">InsightHire</span>
+            </a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links">
+                <a href="/interviewer/signup/" class="login-btn">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Overlay for mobile menu -->
+    <div class="overlay"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-container">
+            <div class="header-section">
+                <h1>Empower Your Interviews with AI</h1>
+                <p>Make better hiring decisions with our advanced candidate assessment platform</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-info-circle"></i> About InsightHire</h2>
+                <p>InsightHire provides AI-powered candidate assessment, analyzing facial expressions and body language to assist in better hiring decisions. Our platform helps you understand candidates beyond their resume and prepared answers, giving you deeper insights into their potential fit for your organization.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-check-circle"></i> Key Benefits</h2>
+                <ul>
+                    <li><strong>Real-time AI assessment</strong> - Get instant feedback on candidate responses and non-verbal cues</li>
+                    <li><strong>Smart question generation</strong> - Let our AI suggest questions based on candidate profiles and responses</li>
+                    <li><strong>Comprehensive behavioral insights</strong> - Access detailed analytics about candidate behavior patterns</li>
+                    <li><strong>Seamless integration</strong> - Works with popular video conferencing platforms like Zoom, Teams, and Google Meet</li>
+                    <li><strong>Time-saving tools</strong> - Automated note-taking and summarization of interview highlights</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-tools"></i> Getting Started</h2>
+                <p>Begin using InsightHire in three simple steps:</p>
+                <ol>
+                    <li>Create your interviewer account</li>
+                    <li>Set up your interview preferences and assessment criteria</li>
+                    <li>Schedule interviews through our integrated calendar system</li>
+                </ol>
+                <p>Our platform will guide you through the process and provide training resources to maximize your interview effectiveness.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-headset"></i> Support &amp; Resources</h2>
+                <p>We're here to help you make the most of InsightHire. Access our comprehensive resources:</p>
+                
+                <div class="support-options">
+                    <div class="support-option">
+                        <i class="fas fa-book"></i>
+                        <a href="/notfound/">Documentation</a>
+                    </div>
+                    <div class="support-option">
+                        <i class="fas fa-video"></i>
+                        <a href="/notfound/">Video Tutorials</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <a href="/interviewer/signup/" class="cta-button">
+                    <i class="fas fa-user-plus"></i> Become an Interviewer
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 InsightHire. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="/privacy/">Privacy Policy</a>
+                <a href="/terms/">Terms of Service</a>
+                <a href="/contact/">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for hamburger menu -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const overlay = document.querySelector('.overlay');
+            let lastScrollTop = 0;
+            
+            // Function to close the menu
+            function closeMenu() {
+                hamburger.classList.remove('open');
+                navLinks.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            // Toggle menu when hamburger is clicked
+            hamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+                overlay.classList.toggle('active');
+                
+                if (navLinks.classList.contains('open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close menu when clicking on a link
+            const links = document.querySelectorAll('.nav-links a');
+            links.forEach(link => {
+                link.addEventListener('click', closeMenu);
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (navLinks.classList.contains('open') && 
+                    !navLinks.contains(e.target) && 
+                    !hamburger.contains(e.target)) {
+                    closeMenu();
+                }
+            });
+            
+            // Close menu when overlay is clicked
+            overlay.addEventListener('click', closeMenu);
+            
+            // Close menu when scrolling
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (Math.abs(scrollTop - lastScrollTop) > 10 && navLinks.classList.contains('open')) {
+                    closeMenu();
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+        });
+    </script>
+</body>
+</html>

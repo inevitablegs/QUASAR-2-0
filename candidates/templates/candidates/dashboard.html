@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candidate Dashboard | InsightHire</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-text">InsightHire</span>
+            </a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links">
+                <a href="/notfound/" class="active">Dashboard</a>
+                <a href="/notfound/">Interviews</a>
+                <a href="/notfound/">Resources</a>
+                <a href="/notfound/" class="profile-btn">My Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Left Sidebar -->
+            <div class="sidebar">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+
+                        <div class="user-role">{{ candidate_profile.job_title|default:"Not Provided" }}</div>
+
+                    </div>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li><a href="/notfound/" class="active"><i class="fas fa-home"></i>&nbsp; Dashboard</a></li>
+                    <li><a href="/notfound/"><i class="fas fa-file-alt"></i>&nbsp; Resume</a></li>
+                    <li><a href="/notfound/"><i class="fas fa-video"></i>&nbsp; Interviews</a></li>
+                    <li><a href="/notfound/"><i class="fas fa-comment-dots"></i>&nbsp; Feedback</a></li>
+                    <li><a href="/notfound/"><i class="fas fa-book"></i>&nbsp; Resources</a></li>
+                    <li><a href="/notfound/"><i class="fas fa-cog"></i>&nbsp; Settings</a></li>
+                </ul>
+                
+                <div class="footer-links" style="margin-top: auto; padding-top: 2rem;">
+                    <a href="/contact/">Help</a> • 
+                    <a href="/privacy/">Privacy</a> • 
+                    <a href="/terms/">Terms</a>
+                </div>
+            </div>
+
+            <!-- Main Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1>Welcome back, {{ request.user.get_full_name|default:request.user.username }}!</h1>
+
+                    <p>Here's your current progress and upcoming interviews.</p>
+                </div>
+                
+                <!-- Resume Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-file-alt"></i> Resume</h2>
+                    </div>
+                    
+                    <form method="post" enctype="multipart/form-data" class="resume-upload">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="resume">Upload or update your resume</label>
+                            <input type="file" id="resume" name="resume">
+                        </div>
+                        <div>
+                            <button type="submit" class="btn">
+                                <i class="fas fa-upload"></i> Upload Resume
+                            </button>
+                        </div>
+                    </form>
+                    
+                    
+                    {% if candidate_profile.resume %}
+                        <div class="resume-info">
+                            <p><i class="fas fa-check-circle"></i> Your resume is ready</p>
+                            <a href="{% url 'download_resume' candidate_profile.user.id %}" class="btn">
+                                <i class="fas fa-download"></i> Download Resume
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="no-resume">
+                            <p>You haven't uploaded a resume yet.</p>
+                        </div>
+                        {% endif %}
+
+                </div>
+                
+                <!-- Interview Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-video"></i> Upcoming Interview</h2>
+                    </div>
+                    
+                    {% if candidate_profile.meeting_link %}
+                    <div class="interview-info">
+                        <h3>Virtual Interview with TechCorp</h3>
+                        
+                        <div class="interview-details">
+                            <div class="interview-detail">
+                                <i class="fas fa-calendar"></i>
+                                <span>March 5, 2025 at 10:30 AM</span>
+                            </div>
+                            <div class="interview-detail">
+                                <i class="fas fa-clock"></i>
+                                <span>60 minutes</span>
+                            </div>
+                            <div class="interview-detail">
+                                <i class="fas fa-user-tie"></i>
+                                <span>Interviewer: Sarah Johnson, Senior Engineer</span>
+                            </div>
+                        </div>
+                        
+                        <div class="interview-actions">
+                            <a href="{{ candidate_profile.meeting_link }}" class="btn" target="_blank">
+                                <i class="fas fa-video"></i> Join Interview
+                            </a>
+                            <a href="/prepare/1234/" class="btn btn-secondary" style="margin-left: 1rem;">
+                                <i class="fas fa-brain"></i> Prepare with AI
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="no-interview">
+                        <i class="fas fa-calendar-times" style="color: #9ca3af; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                        <p>You don't have any interviews scheduled. Complete your profile to start receiving interview requests.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 InsightHire. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="/privacy/">Privacy Policy</a>
+                <a href="/terms/">Terms of Service</a>
+                <a href="/contact/">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for hamburger menu -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            // Toggle menu when hamburger is clicked
+            hamburger.addEventListener('click', function() {
+                hamburger.classList.toggle('open');
+                navLinks.classList.toggle('open');
+                
+                if (navLinks.classList.contains('open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close menu when clicking on a link
+            const links = document.querySelectorAll('.nav-links a');
+            links.forEach(link => {
+                link.addEventListener('click', function() {
+                    hamburger.classList.remove('open');
+                    navLinks.classList.remove('open');
+                    document.body.style.overflow = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

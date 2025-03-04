@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interviewer Login | InsightHire</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+</head>
+<body>
+    <h2>Interviewer Sign In</h2>
+    <p>Enter your credentials to access your interviewer dashboard</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div>
+            <label for="{{ form.username.id_for_label }}">Username</label>
+            <div>
+                {{ form.username }}
+            </div>
+            {% if form.username.errors %}
+            <p>{{ form.username.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="{{ form.password.id_for_label }}">Password</label>
+            <div>
+                {{ form.password }}
+            </div>
+            {% if form.password.errors %}
+            <p>{{ form.password.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+
+        {% if form.errors %}
+        <div>
+            <p>Please check your username and password</p>
+        </div>
+        {% endif %}
+
+        <div>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+
+    <p>Don't have an account? <a href="{% url 'interviewer_signup' %}">Sign up here</a></p>
+</body>
+</html>

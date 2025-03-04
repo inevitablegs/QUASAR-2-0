@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interviewer Sign Up | InsightHire</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+</head>
+<body>
+    <h2>Create Interviewer Account</h2>
+    <p>Fill in your details to get started with InsightHire</p>
+
+    <!-- <form method="post">
+        {% csrf_token %} -->
+        
+        <!-- {% for field in form %}
+        <div>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <div>
+                {{ field }}
+            </div>
+            {% if field.errors %}
+            <p>{{ field.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        {% endfor %} -->
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <label for="id_username">Username:</label>
+            <input type="text" name="username" id="id_username" required>
+            
+            <label for="id_email">Email:</label>
+            <input type="email" name="email" id="id_email" required>
+            
+            <label for="id_password1">Password:</label>
+            <input type="password" name="password1" id="id_password1" required>
+            
+            <label for="id_password2">Confirm Password:</label>
+            <input type="password" name="password2" id="id_password2" required>
+        
+            <label for="id_zoom_account_id">Zoom Account ID:</label>
+            <input type="text" name="zoom_account_id" id="id_zoom_account_id" required>
+        
+            <label for="id_zoom_client_id">Zoom Client ID:</label>
+            <input type="text" name="zoom_client_id" id="id_zoom_client_id" required>
+        
+            <label for="id_zoom_client_secret">Zoom Client Secret:</label>
+            <input type="password" name="zoom_client_secret" id="id_zoom_client_secret" required>
+        
+            <button type="submit">Create Account</button>
+        </form>
+        
+
+        <!-- <div>
+            <button type="submit">Create Account</button>
+        </div> -->
+    <!-- </form> -->
+
+    <p>Already have an account? <a href="{% url 'interviewer_login' %}">Login</a></p>
+</body>
+</html>

@@ -8,7 +8,7 @@ from candidates.models import CandidateProfile
 from home.models import UserProfile
 from .models import InterviewerProfile, InterviewRecording
 from .forms import InterviewerSignUpForm
-from .utils import generate_interview_questions, schedule_meeting, transcribe_audio, generate_heatmap, analyze_video_emotions, generate_interview_analysis
+from .utils import generate_interview_questions, schedule_meeting, transcribe_audio, generate_heatmap, analyze_video_emotions, generate_interview_analysis, generate_overall_report
 
 import os
 from django.core.files.storage import default_storage
@@ -128,7 +128,10 @@ def interviewer_analysis(request):
         return redirect('interviewer_dashboard')  # Redirect back if no candidate is selected
 
     candidate = get_object_or_404(CandidateProfile, id=resume_id)
-    emotion_analysis = None  # Store emotion analysis result
+    heatmap_path = None  # Initialize heatmap_path
+
+    # ✅ Load stored emotion analysis if available
+    emotion_analysis = candidate.emotion_analysis if candidate.emotion_analysis else None
 
     if request.method == 'POST':
         # ✅ Upload Audio
@@ -167,6 +170,29 @@ def interviewer_analysis(request):
             if candidate.video_file:
                 emotion_results = analyze_video_emotions(candidate.video_file.path)
                 emotion_analysis = generate_interview_analysis(emotion_results)  # Generate structured analysis
+            
+                # ✅ Save emotion analysis persistently
+                candidate.emotion_analysis = emotion_analysis
+                candidate.save()
+
+        # ✅ Generate Overall Report
+        elif 'generate_overall_report' in request.POST:
+            if candidate.audio_file and candidate.video_file:
+                # ✅ Fetch the latest stored audio analysis
+                if InterviewRecording.objects.filter(candidate_name=candidate.user.username).exists():
+                    audio_analysis = InterviewRecording.objects.filter(candidate_name=candidate.user.username).latest('id').transcribed_text
+                else:
+                    audio_analysis = "No audio analysis available."
+
+                # ✅ Use stored emotion analysis if available
+                emotion_analysis = candidate.emotion_analysis if candidate.emotion_analysis else "No emotion analysis available."
+
+                # ✅ Generate the overall report
+                overall_report = generate_overall_report(audio_analysis, emotion_analysis)
+
+                # ✅ Save the overall report persistently
+                candidate.overall_report = overall_report
+                candidate.save()
 
     # ✅ Fetch analysis results for the selected candidate only
     recordings = InterviewRecording.objects.filter(candidate_name=candidate.user.username)
@@ -175,5 +201,5 @@ def interviewer_analysis(request):
         'candidate': candidate,
         'recordings': recordings,
         'heatmap_path': heatmap_path if 'heatmap_path' in locals() else None,  # Pass heatmap if available
-        'emotion_analysis': emotion_analysis  # Pass emotion analysis if available
+        'emotion_analysis': emotion_analysis  # Pass stored emotion analysis
     })

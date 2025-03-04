@@ -484,3 +484,55 @@ def generate_interview_analysis(emotion_data):
 
     except Exception as e:
         return f"Error generating interview analysis: {e}"
+
+
+
+
+
+def generate_overall_report(audio_analysis, emotion_analysis):
+    """Generate an overall report combining audio and emotion analysis using Groq API."""
+    template = (
+        "You are an experienced interviewer tasked with generating an overall report for a candidate's performance during an interview. "
+        "Below are the results of the audio analysis and emotion analysis:\n\n"
+        "**Audio Analysis:**\n"
+        "{audio_analysis}\n\n"
+        "**Emotion Analysis:**\n"
+        "{emotion_analysis}\n\n"
+        "**Instructions for the Overall Report:**\n"
+        "1. Provide a general overview of the candidate's performance based on the combined analysis.\n"
+        "2. Highlight key strengths and weaknesses identified in both the audio and emotion analysis.\n"
+        "3. Suggest whether the candidate should be hired or not, based on their performance.\n"
+        "4. Provide a detailed explanation for your recommendation.\n"
+        "**Formatting Rules:**\n"
+        "- Organize your report into clear sections: 'Overview', 'Strengths and Weaknesses', 'Recommendation', and 'Explanation'.\n"
+        "- Be concise and professional in your analysis.\n"
+        "- Do not include any additional comments or explanations beyond the specified instructions.\n"
+    )
+
+    # Format the template with the audio and emotion analysis
+    prompt = template.format(audio_analysis=audio_analysis, emotion_analysis=emotion_analysis)
+
+    try:
+        # Send request to the Groq API
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",  # Groq model choice
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.5,  # Lower temperature for more focused analysis
+            max_tokens=4096,
+            top_p=1,
+            stream=True,
+            stop=None,
+        )
+
+        # Collect streaming response progressively
+        response_chunks = []
+        for message in completion:
+            chunk = message.choices[0].delta.content or ""
+            response_chunks.append(chunk)
+
+        # Join all chunks into a complete response
+        full_response = "".join(response_chunks)
+        return full_response.strip()
+
+    except Exception as e:
+        return f"Error generating overall report: {e}"

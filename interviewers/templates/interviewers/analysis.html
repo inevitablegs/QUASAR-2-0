@@ -69,6 +69,14 @@
             <button type="submit" name="analyze_emotions">Analyze Emotions</button>
         </form>
 
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+            <button type="submit" name="generate_overall_report">Save Overall Report</button>
+        </form>
+        
+
         <!-- ✅ Display Heatmap if Available -->
         {% if heatmap_path %}
         <h4>Video Heatmap:</h4>
@@ -80,6 +88,16 @@
         <h4>Emotion Analysis Report:</h4>
         <p>{{ emotion_analysis|linebreaks }}</p>
         {% endif %}
+
+        <!-- ✅ Save Overall Report Button -->
+
+
+        <!-- ✅ Display Overall Report if Available -->
+        {% if candidate.overall_report %}
+        <h4>Overall Report:</h4>
+        <p>{{ candidate.overall_report|linebreaks }}</p>
+        {% endif %}
+
         {% endif %}
     </div>
 </body>

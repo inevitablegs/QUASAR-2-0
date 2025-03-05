@@ -8,7 +8,7 @@ from candidates.models import CandidateProfile
 from home.models import UserProfile
 from .models import InterviewerProfile, InterviewRecording
 from .forms import InterviewerSignUpForm
-from .utils import generate_interview_questions, schedule_meeting, transcribe_audio, generate_heatmap, analyze_video_emotions, generate_interview_analysis, generate_overall_report
+from .utils import generate_interview_questions, schedule_meeting, transcribe_audio, generate_heatmap, analyze_video_emotions, generate_interview_analysis, generate_overall_report, send_candidate_email, send_interviewer_email
 
 import os
 from django.core.files.storage import default_storage
@@ -79,10 +79,6 @@ def interviewer_dashboard(request):
         elif 'schedule_meeting' in request.POST:
             start_time = request.POST.get('start_time')
 
-            print(f"Zoom Account ID: {interviewer_profile.zoom_account_id}")
-            print(f"Zoom Client ID: {interviewer_profile.zoom_client_id}")
-            print(f"Zoom Client Secret: {interviewer_profile.zoom_client_secret}")
-
             new_meeting_link = schedule_meeting(
                 topic=f"Interview with {candidate.user.username}",
                 start_time=start_time,
@@ -91,11 +87,26 @@ def interviewer_dashboard(request):
                 zoom_client_secret=interviewer_profile.zoom_client_secret
             )
 
-            print(f"Generated meeting link: {new_meeting_link}")
-
             if new_meeting_link:
                 candidate.meeting_link = new_meeting_link
                 candidate.save()
+
+                # Send separate emails to candidate and interviewer
+                send_candidate_email(
+                    candidate_email=candidate.user.email,
+                    candidate_name=candidate.user.username,
+                    meeting_link=new_meeting_link,
+                    start_time=start_time
+                )
+
+                send_interviewer_email(
+                    interviewer_email=request.user.email,
+                    interviewer_name=request.user.username,
+                    candidate_name=candidate.user.username,
+                    meeting_link=new_meeting_link,
+                    start_time=start_time
+                )
+
                 meeting_link = new_meeting_link
 
 

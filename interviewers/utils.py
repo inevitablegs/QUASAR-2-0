@@ -8,6 +8,9 @@ import mediapipe as mp
 import numpy as np
 from django.conf import settings
 from deepface import DeepFace
+from django.core.mail import send_mail
+from django.conf import settings
+
 
 def extract_text_from_pdf(pdf_file_path):
     try:
@@ -157,6 +160,49 @@ def schedule_meeting(topic, start_time, zoom_account_id, zoom_client_id, zoom_cl
         print("Error scheduling meeting:", response.text)
         return None
     
+
+
+def send_candidate_email(candidate_email, candidate_name, meeting_link, start_time):
+    subject = "Your Interview is Scheduled"
+    message = f"""
+    Dear {candidate_name},
+
+    Your interview has been scheduled.
+
+    📅 Date & Time: {start_time}
+    🔗 Meeting Link: {meeting_link}
+
+    Please ensure that you join the meeting on time.
+
+    Best of luck!
+
+    Regards,
+    InsightAi Team
+    """
+
+    send_mail(subject, message, settings.EMAIL_HOST_USER, [candidate_email])
+
+def send_interviewer_email(interviewer_email, interviewer_name, candidate_name, meeting_link, start_time):
+    subject = "New Interview Scheduled"
+    message = f"""
+    Dear {interviewer_name},
+
+    You have an upcoming interview scheduled.
+
+    📌 Candidate: {candidate_name}
+    📅 Date & Time: {start_time}
+    🔗 Meeting Link: {meeting_link}
+
+    Please review the candidate's resume before the interview.
+
+    Regards,
+    InsightAi Team
+    """
+
+    send_mail(subject, message, settings.EMAIL_HOST_USER, [interviewer_email])
+
+
+
 
 
 

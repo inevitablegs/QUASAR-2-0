@@ -143,3 +143,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 SESSION_COOKIE_AGE = 86400  # 1 day
 SESSION_SAVE_EVERY_REQUEST = True
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'insightai.hackathonclub@gmail.com'  
+EMAIL_HOST_PASSWORD = 'rfpn qirj spih hlpv'  

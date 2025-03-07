@@ -2,17 +2,25 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
-from django.urls import reverse_lazy
-
 from candidates.models import CandidateProfile
 from home.models import UserProfile
-from .models import InterviewerProfile, InterviewRecording
+from .models import InterviewerProfile, InterviewRecording, InterviewerVerification
 from .forms import InterviewerSignUpForm
 from .utils import generate_interview_questions, schedule_meeting, transcribe_audio, generate_heatmap, analyze_video_emotions, generate_interview_analysis, generate_overall_report, send_candidate_email, send_interviewer_email
+from django.urls import reverse_lazy
 
 import os
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+
+from django.http import HttpResponse
 
 class InterviewerLoginView(LoginView):
     template_name = 'interviewers/login.html'
@@ -22,13 +30,12 @@ class InterviewerLoginView(LoginView):
         try:
             profile = UserProfile.objects.get(user=user)
             if profile.role != 'interviewer' or user.is_superuser:
-                return redirect('home')  # Prevent admin login to interviewer dashboard
+                # Prevent admin login to interviewer dashboard
+                return redirect('home')
         except UserProfile.DoesNotExist:
             return redirect('home')
         login(self.request, user)
         return redirect('interviewer_dashboard')
-
-
 
 
 # interviewers/views.py
@@ -41,32 +48,75 @@ def interviewer_signup(request):
     if request.method == 'POST':
         form = InterviewerSignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
+            user = form.save(commit=False)
+            user.is_active = False  # Deactivate account until email is verified
+            user.save()
 
             # Ensure UserProfile is created
-            UserProfile.objects.get_or_create(user=user, defaults={"role": "interviewer"})
+            UserProfile.objects.get_or_create(
+                user=user, defaults={"role": "interviewer"})
 
             # Save Zoom credentials and company name in InterviewerProfile
-            interviewer_profile, created = InterviewerProfile.objects.get_or_create(user=user)
+            interviewer_profile, created = InterviewerProfile.objects.get_or_create(
+                user=user)
             interviewer_profile.company_name = form.cleaned_data['company_name']
             interviewer_profile.zoom_account_id = form.cleaned_data['zoom_account_id']
             interviewer_profile.zoom_client_id = form.cleaned_data['zoom_client_id']
             interviewer_profile.zoom_client_secret = form.cleaned_data['zoom_client_secret']
-            interviewer_profile.save()
+            interviewer_profile.save()  # ✅ Save the profile with credentials
 
-            return redirect('interviewer_dashboard')
+            # ✅ Create verification token
+            verification = InterviewerVerification.objects.create(user=user)
+
+            # ✅ Send verification email
+            current_site = get_current_site(request)
+            verification_link = f"http://{current_site.domain}{reverse('verify_email', kwargs={'token': verification.token})}"
+            subject = "Verify Your Email - InsightHire"
+            message = render_to_string('interviewers/email_verification.html', {
+                                       'verification_link': verification_link, 'user': user})
+
+            email = EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[user.email]
+            )
+            email.content_subtype = "html"  # This is the key to sending HTML email
+            email.send()
+
+            # Show message to check email
+            return render(request, 'interviewers/verify_instruction.html')
+
     else:
         form = InterviewerSignUpForm()
-    
+
     return render(request, 'interviewers/signup.html', {'form': form})
 
 
 
+def verify_email(request, token):
+    try:
+        verification = InterviewerVerification.objects.get(token=token)
+        verification.is_verified = True
+        verification.save()
+
+        # Activate the user
+        verification.user.is_active = True
+        verification.user.save()
+
+        # Use `reverse` to get the correct path for 'interviewer_login'
+        login_url = reverse('interviewer_login')  # This generates '/interviewer/login/'
+
+        return HttpResponse(f"Email verified successfully! You can now <a href='{login_url}'>login</a>.")
+        
+    except InterviewerVerification.DoesNotExist:
+        return HttpResponse("Invalid verification link.")
+
 
 @login_required
 def interviewer_dashboard(request):
-    resumes = CandidateProfile.objects.exclude(resume__isnull=True).exclude(resume__exact='')
+    resumes = CandidateProfile.objects.exclude(
+        resume__isnull=True).exclude(resume__exact='')
     questions = None
     meeting_link = None
     evaluation_reports = {}
@@ -74,7 +124,11 @@ def interviewer_dashboard(request):
     interviewer_profile = InterviewerProfile.objects.get(user=request.user)
     candidates = CandidateProfile.objects.filter(company_applied=interviewer_profile.company_name)
 
-    interviewer_profile, created = InterviewerProfile.objects.get_or_create(user=request.user)
+    interviewer_profile = InterviewerProfile.objects.get(user=request.user)
+    candidates = CandidateProfile.objects.filter(company_applied=interviewer_profile.company_name)
+
+    interviewer_profile, created = InterviewerProfile.objects.get_or_create(
+        user=request.user)
 
     if request.method == 'POST':
         resume_id = request.POST.get('resume_id')
@@ -119,16 +173,17 @@ def interviewer_dashboard(request):
 
                 meeting_link = new_meeting_link
 
-
         elif 'process_audio' in request.POST and 'audio_file' in request.FILES:
             audio_file = request.FILES['audio_file']
 
             # Save the uploaded file temporarily
             audio_path = f"media/uploads/{audio_file.name}"
-            path = default_storage.save(audio_path, ContentFile(audio_file.read()))
+            path = default_storage.save(
+                audio_path, ContentFile(audio_file.read()))
 
             # Transcribe the audio using the saved file path
-            evaluation_reports[resume_id] = transcribe_audio(default_storage.path(path))
+            evaluation_reports[resume_id] = transcribe_audio(
+                default_storage.path(path))
 
             # Optionally, delete the file after processing (uncomment to enable cleanup)
             # default_storage.delete(path)
@@ -144,10 +199,12 @@ def interviewer_dashboard(request):
 
 @login_required
 def interviewer_analysis(request):
-    resume_id = request.GET.get('resume_id')  # Get the candidate ID from the request
+    # Get the candidate ID from the request
+    resume_id = request.GET.get('resume_id')
 
     if not resume_id:
-        return redirect('interviewer_dashboard')  # Redirect back if no candidate is selected
+        # Redirect back if no candidate is selected
+        return redirect('interviewer_dashboard')
 
     candidate = get_object_or_404(CandidateProfile, id=resume_id)
     heatmap_path = None  # Initialize heatmap_path
@@ -190,9 +247,11 @@ def interviewer_analysis(request):
         # ✅ Analyze Video Emotions
         elif 'analyze_emotions' in request.POST:
             if candidate.video_file:
-                emotion_results = analyze_video_emotions(candidate.video_file.path)
-                emotion_analysis = generate_interview_analysis(emotion_results)  # Generate structured analysis
-            
+                emotion_results = analyze_video_emotions(
+                    candidate.video_file.path)
+                emotion_analysis = generate_interview_analysis(
+                    emotion_results)  # Generate structured analysis
+
                 # ✅ Save emotion analysis persistently
                 candidate.emotion_analysis = emotion_analysis
                 candidate.save()
@@ -202,7 +261,8 @@ def interviewer_analysis(request):
             if candidate.audio_file and candidate.video_file:
                 # ✅ Fetch the latest stored audio analysis
                 if InterviewRecording.objects.filter(candidate_name=candidate.user.username).exists():
-                    audio_analysis = InterviewRecording.objects.filter(candidate_name=candidate.user.username).latest('id').transcribed_text
+                    audio_analysis = InterviewRecording.objects.filter(
+                        candidate_name=candidate.user.username).latest('id').transcribed_text
                 else:
                     audio_analysis = "No audio analysis available."
 
@@ -210,18 +270,21 @@ def interviewer_analysis(request):
                 emotion_analysis = candidate.emotion_analysis if candidate.emotion_analysis else "No emotion analysis available."
 
                 # ✅ Generate the overall report
-                overall_report = generate_overall_report(audio_analysis, emotion_analysis)
+                overall_report = generate_overall_report(
+                    audio_analysis, emotion_analysis)
 
                 # ✅ Save the overall report persistently
                 candidate.overall_report = overall_report
                 candidate.save()
 
     # ✅ Fetch analysis results for the selected candidate only
-    recordings = InterviewRecording.objects.filter(candidate_name=candidate.user.username)
+    recordings = InterviewRecording.objects.filter(
+        candidate_name=candidate.user.username)
 
     return render(request, 'interviewers/analysis.html', {
         'candidate': candidate,
         'recordings': recordings,
-        'heatmap_path': heatmap_path if 'heatmap_path' in locals() else None,  # Pass heatmap if available
+        # Pass heatmap if available
+        'heatmap_path': heatmap_path if 'heatmap_path' in locals() else None,
         'emotion_analysis': emotion_analysis  # Pass stored emotion analysis
     })

@@ -20,15 +20,12 @@
         
         {% if candidates %}
         <div>
-            <!-- {% for resume in resumes %} -->
+
             {% for candidate in candidates %}
             <div>
                 <h3>{{ candidate.user.username }}'s Resume</h3>
-                
-                
-                
                 {% if candidate.resume %}
-                <a href="{{ resume.resume.url }}">
+                <a href="{{ candidate.resume.url }}">
                     <i class="fas fa-download"></i> Download Resume
                 </a>
                 
@@ -96,7 +93,6 @@
                 <p>No resume uploaded.</p>
                 {% endif %}
             </div>
-            {% endfor %}
             {% endfor %}
         </div>
 

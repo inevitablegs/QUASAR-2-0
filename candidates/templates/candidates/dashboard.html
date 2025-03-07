@@ -68,23 +68,43 @@
 
                     <p>Here's your current progress and upcoming interviews.</p>
                 </div>
+
+                <!-- Apply Now Section -->
                 
+
+                
+
+
+
                 <!-- Resume Card -->
                 <div class="card">
                     <div class="card-header">
                         <h2><i class="fas fa-file-alt"></i> Resume</h2>
                     </div>
+
+                    <div>
+                        <h2>Apply Now</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            <select name="company_name" required>
+                                <option value="">Select a company</option>
+                                {% for company in companies %}
+                                <option value="{{ company }}">{{ company }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" name="apply_now">Apply</button>
+                        </form>
+                    </div>
                     
                     <form method="post" enctype="multipart/form-data" class="resume-upload">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <label for="resume">Upload or update your resume</label>
-                            <input type="file" id="resume" name="resume">
-                        </div>
                         <div>
-                            <button type="submit" class="btn">
-                                <i class="fas fa-upload"></i> Upload Resume
-                            </button>
+                            <h2>Upload Resume</h2>
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <button type="submit" name="upload_resume">Upload Resume</button>
+                            </form>
                         </div>
                     </form>
                     

@@ -15,20 +15,19 @@
         <p>Manage your candidate resumes, interviews, and evaluations.</p>
     </div>
     
-    <!-- Candidate Resumes Section -->
     <div>
         <h2><i class="fas fa-users"></i> Candidate Resumes</h2>
         
-        {% if resumes %}
+        {% if candidates %}
         <div>
-            {% for resume in resumes %}
+            <!-- {% for resume in resumes %} -->
+            {% for candidate in candidates %}
             <div>
-                <h3>
-                    <i class="fas fa-user"></i>
-                    {{ resume.user.username }}'s Resume
-                </h3>
+                <h3>{{ candidate.user.username }}'s Resume</h3>
                 
-                {% if resume.resume %}
+                
+                
+                {% if candidate.resume %}
                 <a href="{{ resume.resume.url }}">
                     <i class="fas fa-download"></i> Download Resume
                 </a>
@@ -98,7 +97,9 @@
                 {% endif %}
             </div>
             {% endfor %}
+            {% endfor %}
         </div>
+
         {% else %}
         <p>No candidate resumes available.</p>
         {% endif %}

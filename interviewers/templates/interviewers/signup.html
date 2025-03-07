@@ -10,10 +10,10 @@
     <h2>Create Interviewer Account</h2>
     <p>Fill in your details to get started with InsightHire</p>
 
-    <!-- <form method="post">
-        {% csrf_token %} -->
+    <form method="post">
+        {% csrf_token %}
         
-        <!-- {% for field in form %}
+        {% for field in form %}
         <div>
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             <div>
@@ -23,9 +23,9 @@
             <p>{{ field.errors|join:", " }}</p>
             {% endif %}
         </div>
-        {% endfor %} -->
+        {% endfor %}
 
-        <form method="post">
+        <!-- <form method="post">
             {% csrf_token %}
             
             <label for="id_username">Username:</label>
@@ -50,13 +50,13 @@
             <input type="password" name="zoom_client_secret" id="id_zoom_client_secret" required>
         
             <button type="submit">Create Account</button>
-        </form>
+        </form> -->
         
 
-        <!-- <div>
+        <div>
             <button type="submit">Create Account</button>
-        </div> -->
-    <!-- </form> -->
+        </div> 
+    </form>
 
     <p>Already have an account? <a href="{% url 'interviewer_login' %}">Login</a></p>
 </body>

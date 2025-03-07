@@ -7,13 +7,15 @@ from .models import InterviewRecording
 
 class InterviewerSignUpForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    company_name = forms.CharField(max_length=255, required=True)  # Add this line
     zoom_account_id = forms.CharField(max_length=255, required=True)
     zoom_client_id = forms.CharField(max_length=255, required=True)
     zoom_client_secret = forms.CharField(max_length=255, required=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2', 'zoom_account_id', 'zoom_client_id', 'zoom_client_secret']
+        fields = ['username', 'email', 'password1', 'password2', 'company_name', 'zoom_account_id', 'zoom_client_id', 'zoom_client_secret']
+
 
 
 

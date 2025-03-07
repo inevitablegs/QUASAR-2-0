@@ -24,22 +24,36 @@ def download_resume(request, candidate_id):
 
 
 
+# candidates/views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import ResumeUploadForm
+from .models import CandidateProfile
+from interviewers.models import InterviewerProfile
+
 @login_required
 def candidate_dashboard(request):
     candidate_profile, created = CandidateProfile.objects.get_or_create(user=request.user)
-    
+    companies = InterviewerProfile.objects.values_list('company_name', flat=True).distinct()
+
     if request.method == "POST":
-        form = ResumeUploadForm(request.POST, request.FILES, instance=candidate_profile)
-        if form.is_valid():
-            form.save()
-            return redirect('candidate_dashboard')  # Refresh page after upload
-    
+        if 'apply_now' in request.POST:
+            company_name = request.POST.get('company_name')
+            candidate_profile.company_applied = company_name
+            candidate_profile.save()
+            return redirect('candidate_dashboard')
+        elif 'upload_resume' in request.POST:
+            form = ResumeUploadForm(request.POST, request.FILES, instance=candidate_profile)
+            if form.is_valid():
+                form.save()
+                return redirect('candidate_dashboard')
     else:
         form = ResumeUploadForm(instance=candidate_profile)
 
     return render(request, 'candidates/dashboard.html', {
         'candidate_profile': candidate_profile,
-        'form': form,  # Pass the form to the template
+        'form': form,
+        'companies': companies,
     })
 
 

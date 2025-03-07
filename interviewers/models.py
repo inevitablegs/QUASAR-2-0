@@ -1,14 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.db import models
+from django.contrib.auth.models import User
+
 class InterviewerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    company_name = models.CharField(max_length=255, default="InsightHire")  # Added field
     zoom_account_id = models.CharField(max_length=255, blank=True, null=True)
     zoom_client_id = models.CharField(max_length=255, blank=True, null=True)
     zoom_client_secret = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} ({self.company_name})"
+
     
 
 class InterviewRecording(models.Model):

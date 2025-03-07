@@ -31,6 +31,12 @@ class InterviewerLoginView(LoginView):
 
 
 
+# interviewers/views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import InterviewerSignUpForm
+from home.models import UserProfile
+
 def interviewer_signup(request):
     if request.method == 'POST':
         form = InterviewerSignUpForm(request.POST)
@@ -38,15 +44,16 @@ def interviewer_signup(request):
             user = form.save()
             login(request, user)
 
-            # ✅ Ensure UserProfile is created
+            # Ensure UserProfile is created
             UserProfile.objects.get_or_create(user=user, defaults={"role": "interviewer"})
 
-            # ✅ Save Zoom credentials in InterviewerProfile
+            # Save Zoom credentials and company name in InterviewerProfile
             interviewer_profile, created = InterviewerProfile.objects.get_or_create(user=user)
+            interviewer_profile.company_name = form.cleaned_data['company_name']
             interviewer_profile.zoom_account_id = form.cleaned_data['zoom_account_id']
             interviewer_profile.zoom_client_id = form.cleaned_data['zoom_client_id']
             interviewer_profile.zoom_client_secret = form.cleaned_data['zoom_client_secret']
-            interviewer_profile.save()  # ✅ Save the profile with credentials
+            interviewer_profile.save()
 
             return redirect('interviewer_dashboard')
     else:
@@ -63,6 +70,9 @@ def interviewer_dashboard(request):
     questions = None
     meeting_link = None
     evaluation_reports = {}
+
+    interviewer_profile = InterviewerProfile.objects.get(user=request.user)
+    candidates = CandidateProfile.objects.filter(company_applied=interviewer_profile.company_name)
 
     interviewer_profile, created = InterviewerProfile.objects.get_or_create(user=request.user)
 
@@ -127,7 +137,8 @@ def interviewer_dashboard(request):
         'resumes': resumes,
         'questions': questions,
         'meeting_link': meeting_link,
-        'evaluation_reports': evaluation_reports
+        'evaluation_reports': evaluation_reports,
+        'candidates': candidates
     })
 
 

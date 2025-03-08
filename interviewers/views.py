@@ -132,10 +132,17 @@ def interviewer_dashboard(request):
 
     if request.method == 'POST':
         resume_id = request.POST.get('resume_id')
-        candidate = CandidateProfile.objects.get(id=resume_id)
+        if not resume_id:
+            # Handle the case where resume_id is missing or empty
+            return HttpResponse("Resume ID is missing.", status=400)
+        
+        try:
+            candidate = CandidateProfile.objects.get(id=resume_id)
+        except CandidateProfile.DoesNotExist:
+            return HttpResponse("Candidate not found.", status=404)
 
         if 'generate_questions' in request.POST:
-            # Generate questions for the specific candidate
+           # Generate questions for the specific candidate
             questions = generate_interview_questions(candidate.resume.path)
             # Store the questions in the context with the candidate's ID
             questions = {resume_id: questions}

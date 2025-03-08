@@ -33,7 +33,7 @@
                     <!-- Form to generate questions -->
                     <form method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="resume_id" value="{{ resume.id }}">
+                        <input type="hidden" name="resume_id" value="{{ candidate.id }}">
                         <button type="submit" name="generate_questions">
                             <i class="fas fa-brain"></i> Generate Questions
                         </button>
@@ -42,7 +42,7 @@
                     <!-- Form to schedule a meeting -->
                     <form method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="resume_id" value="{{ resume.id }}">
+                        <input type="hidden" name="resume_id" value="{{ candidate.id }}">
                         <input type="datetime-local" name="start_time" required>
                         <button type="submit" name="schedule_meeting">
                             <i class="fas fa-calendar-plus"></i> Schedule Meeting
@@ -50,16 +50,12 @@
                     </form>
                 </div>
                 
-                {% if resume.meeting_link %}
+                {% if candidate.meeting_link %}
                 <div>
-                    <i class="fas fa-video"></i> Meeting Link:
-                    <a href="{{ resume.meeting_link }}" target="_blank">
-                        {{ resume.meeting_link }}
-                    </a>
                     
                     <!-- Redirect to Analysis Page -->
                     <form method="get" action="{% url 'interviewer_analysis' %}">
-                        <input type="hidden" name="resume_id" value="{{ resume.id }}">
+                        <input type="hidden" name="resume_id" value="{{ candidate.id }}">
                         <button type="submit">
                             <i class="fas fa-chart-line"></i> Analyze
                         </button>
@@ -68,6 +64,26 @@
                 </div>
                 {% endif %}
                 
+
+                <!-- Display meeting link if available -->
+                {% if candidate.meeting_link %}
+                <div>
+                    <i class="fas fa-video"></i> Meeting Link:
+                    <a href="{{ candidate.meeting_link }}" target="_blank">
+                        {{ candidate.meeting_link }}
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Display generated questions if available -->
+                {% if questions and candidate.id|stringformat:"s" in questions %}
+                <div>
+                    <i class="fas fa-question-circle"></i> Generated Questions
+                    <div>
+                        {{ questions|get_item:candidate.id|linebreaks|safe }}
+                    </div>
+                </div>
+                {% endif %}
                 
                 <!-- Display evaluation reports for the specific candidate -->
                 {% if evaluation_reports and resume.id|stringformat:"s" in evaluation_reports %}

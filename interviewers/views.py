@@ -5,9 +5,10 @@ from django.contrib.auth.views import LoginView
 from candidates.models import CandidateProfile
 from home.models import UserProfile
 from .models import InterviewerProfile, InterviewRecording, InterviewerVerification
-from .forms import InterviewerSignUpForm
+from .forms import InterviewerSignUpForm, InterviewerProfileForm
 from .utils import generate_interview_questions, schedule_meeting, transcribe_audio, generate_heatmap, analyze_video_emotions, generate_interview_analysis, generate_overall_report, send_candidate_email, send_interviewer_email
 from django.urls import reverse_lazy
+
 
 import os
 from django.core.files.storage import default_storage
@@ -111,7 +112,26 @@ def verify_email(request, token):
         
     except InterviewerVerification.DoesNotExist:
         return HttpResponse("Invalid verification link.")
+    
+@login_required
+def view_candidate_profile(request, candidate_id):
+    candidate = get_object_or_404(CandidateProfile, id=candidate_id)
+    return render(request, 'interviewers/candidate_profile.html', {'candidate': candidate})
 
+
+@login_required
+def interviewer_profile(request):
+    interviewer_profile, _ = InterviewerProfile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        form = InterviewerProfileForm(request.POST, instance=interviewer_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('interviewer_profile')
+    else:
+        form = InterviewerProfileForm(instance=interviewer_profile)
+
+    return render(request, 'interviewers/profile.html', {'form': form, 'interviewer_profile': interviewer_profile})
 
 @login_required
 def interviewer_dashboard(request):

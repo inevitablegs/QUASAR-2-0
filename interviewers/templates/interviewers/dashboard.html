@@ -2,119 +2,171 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Interviewer Dashboard | InsightHire</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
-</head>
-<body>
-    {% load custom_filters %}
-    <div>
-        <h1>Interviewer Dashboard</h1>
-        <p>Manage your candidate resumes, interviews, and evaluations.</p>
-    </div>
-    
-    <div>
-        <h2><i class="fas fa-users"></i> Candidate Resumes</h2>
-        
-        {% if candidates %}
-        <div>
-
-            {% for candidate in candidates %}
-            <div>
-                <h3>{{ candidate.user.username }}'s Resume</h3>
-                {% if candidate.resume %}
-                <a href="{{ candidate.resume.url }}">
-                    <i class="fas fa-download"></i> Download Resume
-                </a>
-                
-                <div>
-                    <!-- Form to generate questions -->
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="resume_id" value="{{ candidate.id }}">
-                        <button type="submit" name="generate_questions">
-                            <i class="fas fa-brain"></i> Generate Questions
-                        </button>
-                    </form>
-                    
-                    <!-- Form to schedule a meeting -->
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="resume_id" value="{{ candidate.id }}">
-                        <input type="datetime-local" name="start_time" required>
-                        <button type="submit" name="schedule_meeting">
-                            <i class="fas fa-calendar-plus"></i> Schedule Meeting
-                        </button>
-                    </form>
-                </div>
-                
-                {% if candidate.meeting_link %}
-                <div>
-                    
-                    <!-- Redirect to Analysis Page -->
-                    <form method="get" action="{% url 'interviewer_analysis' %}">
-                        <input type="hidden" name="resume_id" value="{{ candidate.id }}">
-                        <button type="submit">
-                            <i class="fas fa-chart-line"></i> Analyze
-                        </button>
-                    </form>
-                    
-                </div>
-                {% endif %}
-                
-
-                <!-- Display meeting link if available -->
-                {% if candidate.meeting_link %}
-                <div>
-                    <i class="fas fa-video"></i> Meeting Link:
-                    <a href="{{ candidate.meeting_link }}" target="_blank">
-                        {{ candidate.meeting_link }}
-                    </a>
-                </div>
-                {% endif %}
-
-                <!-- Display generated questions if available -->
-                {% if questions and candidate.id|stringformat:"s" in questions %}
-                <div>
-                    <i class="fas fa-question-circle"></i> Generated Questions
-                    <div>
-                        {{ questions|get_item:candidate.id|linebreaks|safe }}
-                    </div>
-                </div>
-                {% endif %}
-                
-                <!-- Display evaluation reports for the specific candidate -->
-                {% if evaluation_reports and resume.id|stringformat:"s" in evaluation_reports %}
-                <div>
-                    <i class="fas fa-file-alt"></i> Interview Analysis
-                    <div>
-                        {{ evaluation_reports|get_item:resume.id|linebreaks|safe }}
-                    </div>
-                </div>
-                {% endif %}
-                
-                <!-- Display generated questions for the specific candidate -->
-                {% if questions and resume.id|stringformat:"s" in questions %}
-                <div>
-                    <i class="fas fa-question-circle"></i> Generated Questions
-                    <div>
-                        {{ questions|get_item:resume.id|linebreaks|safe }}
-                    </div>
-                </div>
-                {% endif %}
-                
-                {% else %}
-                <p>No resume uploaded.</p>
-                {% endif %}
-            </div>
-            {% endfor %}
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav>
+      <div class="nav-container">
+        <a href="/" class="logo">
+          <span class="logo-text">InsightHire</span>
+        </a>
+        <div class="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
+        <div class="nav-links">
+          <a href="{% url 'interviewer_dashboard' %}" class="active"
+            >Dashboard</a
+          >
+          <a href="/notfound/">Interviews</a>
+          <a href="/notfound/">Resources</a>
+          <a href="{% url 'interviewer_profile' %}" class="profile-btn"
+            >My Profile</a
+          >
+        </div>
+      </div>
+    </nav>
 
-        {% else %}
-        <p>No candidate resumes available.</p>
-        {% endif %}
+    <div>
+      <h1>Interviewer Dashboard</h1>
+      <p>Manage your candidate resumes, interviews, and evaluations.</p>
     </div>
-</body>
+
+    <div>
+      <h2><i class="fas fa-users"></i> Candidate Resumes</h2>
+
+      {% if candidates %}
+      <div>
+        {% for candidate in candidates %}
+        <div>
+          <h3>{{ candidate.user.username }}'s Resume</h3>
+          <a href="{% url 'view_candidate_profile' candidate.id %}" class="btn">
+            <i class="fas fa-user"></i> View Profile
+          </a>
+          {% if candidate.resume %}
+          <a href="{{ candidate.resume.url }}">
+            <i class="fas fa-download"></i> Download Resume
+          </a>
+
+          <div>
+            <!-- Form to generate questions -->
+            <form method="post">
+              {% csrf_token %}
+              <input
+                type="hidden"
+                name="resume_id"
+                value="{{ candidate.id }}"
+              />
+              <button type="submit" name="generate_questions">
+                <i class="fas fa-brain"></i> Generate Questions
+              </button>
+            </form>
+
+            <!-- Form to schedule a meeting -->
+            <form method="post">
+              {% csrf_token %}
+              <input
+                type="hidden"
+                name="resume_id"
+                value="{{ candidate.id }}"
+              />
+              <input type="datetime-local" name="start_time" required />
+              <button type="submit" name="schedule_meeting">
+                <i class="fas fa-calendar-plus"></i> Schedule Meeting
+              </button>
+            </form>
+          </div>
+
+          {% if candidate.meeting_link %}
+          <div>
+            <!-- Redirect to Analysis Page -->
+            <form method="get" action="{% url 'interviewer_analysis' %}">
+              <input
+                type="hidden"
+                name="resume_id"
+                value="{{ candidate.id }}"
+              />
+              <button type="submit">
+                <i class="fas fa-chart-line"></i> Analyze
+              </button>
+            </form>
+          </div>
+          {% endif %}
+
+          <!-- Display meeting link if available -->
+          {% if candidate.meeting_link %}
+          <div>
+            <i class="fas fa-video"></i> Meeting Link:
+            <a href="{{ candidate.meeting_link }}" target="_blank">
+              {{ candidate.meeting_link }}
+            </a>
+          </div>
+          {% endif %}
+
+          <!-- Display generated questions if available -->
+          {% if questions and candidate.id|stringformat:"s" in questions %}
+          <div>
+            <i class="fas fa-question-circle"></i> Generated Questions
+            <div>{{ questions|get_item:candidate.id|linebreaks|safe }}</div>
+          </div>
+          {% endif %} {% else %}
+          <p>No resume uploaded.</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      {% else %}
+      <p>No candidate resumes available.</p>
+      {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2025 InsightHire. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="/privacy/">Privacy Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/contact/">Contact Us</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript for hamburger menu -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const hamburger = document.querySelector(".hamburger");
+        const navLinks = document.querySelector(".nav-links");
+
+        // Toggle menu when hamburger is clicked
+        hamburger.addEventListener("click", function () {
+          hamburger.classList.toggle("open");
+          navLinks.classList.toggle("open");
+
+          if (navLinks.classList.contains("open")) {
+            document.body.style.overflow = "hidden";
+          } else {
+            document.body.style.overflow = "";
+          }
+        });
+
+        // Close menu when clicking on a link
+        const links = document.querySelectorAll(".nav-links a");
+        links.forEach((link) => {
+          link.addEventListener("click", function () {
+            hamburger.classList.remove("open");
+            navLinks.classList.remove("open");
+            document.body.style.overflow = "";
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Candidate Profile</title>
+</head>
+<body>
+    <h1>Candidate Profile: {{ candidate.user.username }}</h1>
+    <p><strong>Job Title:</strong> {{ candidate.job_title|default:"Not Provided" }}</p>
+    <p><strong>LinkedIn:</strong> <a href="{{ candidate.linkedin_profile }}" target="_blank">{{ candidate.linkedin_profile|default:"Not Provided" }}</a></p>
+    <p><strong>GitHub:</strong> <a href="{{ candidate.github_profile }}" target="_blank">{{ candidate.github_profile|default:"Not Provided" }}</a></p>
+    <p><strong>Address:</strong> {{ candidate.address|default:"Not Provided" }}</p>
+    <p><strong>Skills:</strong> {{ candidate.skills|default:"Not Provided" }}</p>
+    <p><strong>Experience:</strong> {{ candidate.experience|default:"Not Provided" }}</p>
+
+    <a href="{% url 'interviewer_dashboard' %}">Back to Dashboard</a>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Interviewer Profile</title>
+</head>
+<body>
+    <h1>My Profile</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update Profile</button>
+    </form>
+    <a href="{% url 'interviewer_dashboard' %}">Back to Dashboard</a>
+</body>
+</html>

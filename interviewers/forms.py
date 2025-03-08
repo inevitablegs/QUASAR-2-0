@@ -25,3 +25,9 @@ class AudioUploadForm(forms.ModelForm):
     class Meta:
         model = InterviewRecording
         fields = ['candidate_name', 'audio_file']
+
+
+class InterviewerProfileForm(forms.ModelForm):
+    class Meta:
+        model = InterviewerProfile
+        fields = ['linkedin_profile', 'company_website', 'company_address', 'company_linkedin']

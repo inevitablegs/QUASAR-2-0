@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import ResumeUploadForm, CandidateSignUpForm
+from .forms import ResumeUploadForm, CandidateSignUpForm, CandidateProfileForm
 from .models import CandidateProfile,CandidateVerification
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
@@ -148,3 +148,18 @@ def candidate_verify_email(request, token):
         
     except CandidateVerification.DoesNotExist:
         return HttpResponse("Invalid verification link.")
+    
+
+@login_required
+def candidate_profile(request):
+    candidate_profile, _ = CandidateProfile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        form = CandidateProfileForm(request.POST, request.FILES, instance=candidate_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('candidate_profile')
+    else:
+        form = CandidateProfileForm(instance=candidate_profile)
+
+    return render(request, 'candidates/profile.html', {'form': form, 'candidate_profile': candidate_profile})

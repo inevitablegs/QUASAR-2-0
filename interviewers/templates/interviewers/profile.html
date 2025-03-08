@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Candidate Dashboard | InsightHire</title>
+    <title>Interviewer Profile | InsightHire</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -224,18 +224,19 @@
             margin-right: 0.75rem;
         }
 
-        /* Dashboard Content */
-        .dashboard-content {
+        /* Profile Content */
+        .profile-content {
             flex: 1;
             padding: 2rem;
             background-color: white;
         }
 
-        .dashboard-header {
+        .profile-header {
             margin-bottom: 2rem;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        .dashboard-header h1 {
+        .profile-header h1 {
             color: var(--primary-color);
             margin-bottom: 0.5rem;
         }
@@ -247,6 +248,7 @@
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.8s ease-out 0.3s both;
         }
 
         .card:hover {
@@ -267,11 +269,55 @@
             margin-left: 0.5rem;
         }
 
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ccc;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        }
+
+        .form-group input[type="file"] {
+            padding: 0.5rem 0;
+            background-color: transparent;
+            border: none;
+        }
+
+        .errorlist {
+            color: var(--error-color);
+            list-style: none;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+        }
+
         .btn {
             background-color: var(--primary-color);
             color: var(--text-color-light);
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 0.5rem;
             text-decoration: none;
             display: inline-flex;
@@ -279,6 +325,7 @@
             transition: all 0.3s ease;
             cursor: pointer;
             font-weight: 500;
+            margin-right: 1rem;
         }
 
         .btn:hover {
@@ -287,78 +334,18 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .btn-secondary {
-            background-color: var(--secondary-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--secondary-color-light);
-        }
-
-        .resume-upload {
-            margin-bottom: 1rem;
-        }
-
-        .resume-upload .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .interview-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.75rem;
-            margin: 1rem 0;
-        }
-
-        .interview-detail {
-            display: flex;
+        .back-btn {
+            background-color: #6b7280;
+            display: inline-flex;
             align-items: center;
-            opacity: 0.8;
         }
 
-        .interview-detail i {
+        .back-btn:hover {
+            background-color: #4b5563;
+        }
+
+        .back-btn i {
             margin-right: 0.5rem;
-            color: var(--primary-color);
-        }
-
-        .interview-actions {
-            display: flex;
-            align-items: center;
-            margin-top: 1rem;
-        }
-
-        .no-interview, .no-resume {
-            text-align: center;
-            padding: 1rem;
-            background-color: rgba(156, 163, 175, 0.1);
-            border-radius: 0.5rem;
-        }
-
-        /* Apply Now Section */
-        .apply-now {
-            margin-bottom: 1.5rem;
-        }
-
-        .apply-now select {
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            border: 1px solid #ccc;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .resume-info {
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: rgba(34, 197, 94, 0.1);
-            border-radius: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .resume-info p {
-            color: var(--accent-color-dark);
         }
 
         /* Footer */
@@ -403,7 +390,7 @@
                 order: 2;
             }
 
-            .dashboard-content {
+            .profile-content {
                 order: 1;
             }
 
@@ -447,18 +434,10 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .interview-details {
-                grid-template-columns: 1fr;
-            }
-
-            .interview-actions {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
             .btn {
                 width: 100%;
                 justify-content: center;
+                margin-bottom: 1rem;
             }
         }
 
@@ -477,22 +456,6 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
-        }
-
-        .dashboard-header h1 {
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .dashboard-header p {
-            animation: fadeIn 0.8s ease-out 0.2s both;
-        }
-
-        .card:nth-child(1) {
-            animation: fadeIn 0.8s ease-out 0.3s both;
-        }
-
-        .card:nth-child(2) {
-            animation: fadeIn 0.8s ease-out 0.4s both;
         }
 
         .btn {
@@ -528,10 +491,6 @@
                 opacity: 0;
             }
         }
-
-        .join-interview {
-            animation: pulse 2s infinite;
-        }
     </style>
 </head>
 <body>
@@ -547,10 +506,10 @@
                 <span></span>
             </div>
             <div class="nav-links">
-                <a href="/notfound/" class="active">Dashboard</a>
+                <a href="/notfound/">Dashboard</a>
                 <a href="/notfound/">Interviews</a>
                 <a href="/notfound/">Resources</a>
-                <a href="{% url 'candidate_profile' %}" class="profile-btn">My Profile</a>
+                <a href="#" class="profile-btn active">My Profile</a>
             </div>
         </div>
     </nav>
@@ -566,15 +525,15 @@
                     </div>
                     <div>
                         <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
-                        <div class="user-role">{{ candidate_profile.job_title|default:"Not Provided" }}</div>
+                        <div class="user-role">Interviewer</div>
                     </div>
                 </div>
                 
                 <ul class="nav-menu">
-                    <li><a href="/notfound/" class="active"><i class="fas fa-home"></i>&nbsp; Dashboard</a></li>
-                    <li><a href="/notfound/"><i class="fas fa-file-alt"></i>&nbsp; Resume</a></li>
+                    <li><a href="/notfound/"><i class="fas fa-home"></i>&nbsp; Dashboard</a></li>
+                    <li><a href="/notfound/"><i class="fas fa-calendar-alt"></i>&nbsp; Schedule</a></li>
                     <li><a href="/notfound/"><i class="fas fa-video"></i>&nbsp; Interviews</a></li>
-                    <li><a href="/notfound/"><i class="fas fa-comment-dots"></i>&nbsp; Feedback</a></li>
+                    <li><a href="/notfound/"><i class="fas fa-clipboard-list"></i>&nbsp; Evaluations</a></li>
                     <li><a href="/notfound/"><i class="fas fa-book"></i>&nbsp; Resources</a></li>
                     <li><a href="/notfound/"><i class="fas fa-cog"></i>&nbsp; Settings</a></li>
                 </ul>
@@ -586,100 +545,33 @@
                 </div>
             </div>
 
-            <!-- Main Dashboard Content -->
-            <div class="dashboard-content">
-                <div class="dashboard-header">
-                    <h1>Welcome back, {{ request.user.get_full_name|default:request.user.username }}!</h1>
-                    <p>Here's your current progress and upcoming interviews.</p>
+            <!-- Main Profile Content -->
+            <div class="profile-content">
+                <div class="profile-header">
+                    <h1>Interviewer Profile</h1>
+                    <p>Update your profile information to help manage your interviewing preferences and expertise.</p>
                 </div>
 
-                <!-- Resume Card -->
+                <!-- Profile Form Card -->
                 <div class="card">
                     <div class="card-header">
-                        <i class="fas fa-file-alt"></i>
-                        <h2>Resume</h2>
+                        <i class="fas fa-user-edit"></i>
+                        <h2>Profile Information</h2>
                     </div>
                     
-                    <div class="apply-now">
-                        <h3 style="margin-bottom: 0.75rem;">Apply Now</h3>
-                        <form method="post">
-                            {% csrf_token %}
-                            <select name="company_name" required>
-                                <option value="">Select a company</option>
-                                {% for company in companies %}
-                                <option value="{{ company }}">{{ company }}</option>
-                                {% endfor %}
-                            </select>
-                            <button type="submit" name="apply_now" class="btn">Apply</button>
-                        </form>
-                    </div>
-                    
-                    <form method="post" enctype="multipart/form-data" class="resume-upload">
+                    <form method="post">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <h3 style="margin-bottom: 0.75rem;">Upload Resume</h3>
-                            {{ form.as_p }}
-                            <button type="submit" name="upload_resume" class="btn">
-                                <i class="fas fa-upload"></i>&nbsp; Upload Resume
+                        {{ form.as_p }}
+                        
+                        <div class="form-actions" style="display: flex; flex-wrap: wrap; margin-top: 2rem;">
+                            <button type="submit" class="btn">
+                                <i class="fas fa-save"></i>&nbsp; Update Profile
                             </button>
+                            <a href="{% url 'interviewer_dashboard' %}" class="btn back-btn">
+                                <i class="fas fa-arrow-left"></i>&nbsp; Back to Dashboard
+                            </a>
                         </div>
                     </form>
-                    
-                    {% if candidate_profile.resume %}
-                    <div class="resume-info">
-                        <p><i class="fas fa-check-circle"></i> Your resume is ready</p>
-                        <a href="{% url 'download_resume' candidate_profile.user.id %}" class="btn">
-                            <i class="fas fa-download"></i>&nbsp; Download Resume
-                        </a>
-                    </div>
-                    {% else %}
-                    <div class="no-resume">
-                        <p>You haven't uploaded a resume yet.</p>
-                    </div>
-                    {% endif %}
-                </div>
-                
-                <!-- Interview Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-video"></i>
-                        <h2>Upcoming Interview</h2>
-                    </div>
-                    
-                    {% if candidate_profile.meeting_link %}
-                    <div class="interview-info">
-                        <h3>Virtual Interview with TechCorp</h3>
-                        
-                        <div class="interview-details">
-                            <div class="interview-detail">
-                                <i class="fas fa-calendar"></i>
-                                <span>March 5, 2025 at 10:30 AM</span>
-                            </div>
-                            <div class="interview-detail">
-                                <i class="fas fa-clock"></i>
-                                <span>60 minutes</span>
-                            </div>
-                            <div class="interview-detail">
-                                <i class="fas fa-user-tie"></i>
-                                <span>Interviewer: Sarah Johnson, Senior Engineer</span>
-                            </div>
-                        </div>
-                        
-                        <div class="interview-actions">
-                            <a href="{{ candidate_profile.meeting_link }}" class="btn join-interview">
-                                <i class="fas fa-video"></i>&nbsp; Join Interview
-                            </a>
-                            <a href="/prepare/1234/" class="btn btn-secondary" style="margin-left: 1rem;">
-                                <i class="fas fa-brain"></i>&nbsp; Prepare with AI
-                            </a>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="no-interview">
-                        <i class="fas fa-calendar-times" style="color: #9ca3af; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
-                        <p>You don't have any interviews scheduled. Complete your profile to start receiving interview requests.</p>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </div>

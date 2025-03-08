@@ -7,7 +7,11 @@ from django.contrib.auth.models import User
 
 class InterviewerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company_name = models.CharField(max_length=255, default="InsightHire")  # Added field
+    company_name = models.CharField(max_length=255, default="InsightHire")
+    company_website = models.URLField(blank=True, null=True)  # New field
+    company_address = models.TextField(blank=True, null=True)  # New field
+    company_linkedin = models.URLField(blank=True, null=True)  # New field
+    linkedin_profile = models.URLField(blank=True, null=True)  # New field
     zoom_account_id = models.CharField(max_length=255, blank=True, null=True)
     zoom_client_id = models.CharField(max_length=255, blank=True, null=True)
     zoom_client_secret = models.CharField(max_length=255, blank=True, null=True)

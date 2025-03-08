@@ -2,11 +2,231 @@
 <html>
 <head>
     <title>Verify Your Email</title>
+    <style>
+        :root {
+            /* Color Variables */
+            --primary-teal: #008080;
+            --bright-teal: #00a0a0;
+            --dark-teal: #006666;
+            --light-teal: #e0f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --background-light: #f9f9f9;
+            --white: #ffffff;
+            --border-light: #eaeaea;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            
+            /* Animation Variables */
+            --transition-speed: 0.3s;
+            --animation-duration: 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--background-light);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            animation: fadeIn var(--animation-duration) ease-out;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn var(--animation-duration) ease-out;
+        }
+        
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+            transition: transform var(--transition-speed) ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        h1 {
+            color: var(--primary-teal);
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            transition: color var(--transition-speed) ease;
+        }
+        
+        h1:hover {
+            color: var(--bright-teal);
+        }
+        
+        .content {
+            padding: 20px 0;
+            animation: fadeIn var(--animation-duration) ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .verification-button {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 30px auto;
+            padding: 14px 20px;
+            background-color: var(--bright-teal);
+            color: var(--white);
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+        }
+        
+        .verification-button:hover {
+            background-color: var(--dark-teal);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 128, 128, 0.3);
+        }
+        
+        .verification-button:active {
+            transform: translateY(1px);
+        }
+        
+        .verification-button::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease-out;
+        }
+        
+        .verification-button:hover::after {
+            transform: translateX(100%);
+        }
+        
+        .link-fallback {
+            word-break: break-all;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 15px;
+            transition: color var(--transition-speed) ease;
+        }
+        
+        .link-fallback:hover {
+            color: var(--primary-teal);
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            animation: fadeIn var(--animation-duration) ease-out;
+            animation-delay: 0.4s;
+            animation-fill-mode: both;
+        }
+        
+        .social-links {
+            margin-top: 15px;
+        }
+        
+        .social-icon {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            margin: 0 8px;
+            background-color: var(--bright-teal);
+            border-radius: 50%;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary-teal);
+            transform: translateY(-3px) rotate(15deg);
+            box-shadow: 0 4px 8px rgba(0, 128, 128, 0.3);
+        }
+        
+        /* Card lift effect on hover */
+        .container:hover {
+            box-shadow: 0 10px 20px var(--shadow-color);
+            transform: translateY(-5px);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        /* Highlight section on hover */
+        .content:hover {
+            background-color: var(--light-teal);
+            border-radius: 4px;
+            transition: background-color var(--transition-speed) ease;
+        }
+    </style>
 </head>
 <body>
-    <p>Hello {{ user.username }},</p>
-    <p>Click the link below to verify your email and activate your account:</p>
-    <p><a href="{{ verification_link }}">{{ verification_link }}</a></p>
-    <p>Thank you for using InsightHire!</p>
+    <div class="container">
+        <div class="header">
+            <!-- Optional: Add logo here -->
+            <!-- <img class="logo" src="logo.png" alt="InsightHire Logo"> -->
+            <h1>InsightHire</h1>
+        </div>
+        
+        <div class="content">
+            <p>Hello <strong>{{ user.username }}</strong>,</p>
+            <p>Thank you for joining InsightHire! Please verify your email address to activate your account and get started.</p>
+            
+            <a href="{{ verification_link }}" class="verification-button">Verify Email Address</a>
+            
+            <p class="link-fallback">If the button above doesn't work, copy and paste the following link into your browser:<br>
+            {{ verification_link }}</p>
+            
+            <p>This link will expire in 24 hours. If you did not create an account with InsightHire, please disregard this email.</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 InsightHire. All rights reserved.</p>
+            <p>Questions? Contact our support team at support@insighthire.com</p>
+            
+            <div class="social-links">
+                <!-- Social icons could go here as images or font icons -->
+                <span class="social-icon"></span>
+                <span class="social-icon"></span>
+                <span class="social-icon"></span>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

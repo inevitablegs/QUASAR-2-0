@@ -18,6 +18,12 @@ class CandidateProfile(models.Model):
     video_file = models.FileField(upload_to="interview_videos/", blank=True, null=True)
     emotion_analysis = models.TextField(blank=True, null=True)
     overall_report = models.TextField(blank=True, null=True)
+    hiring_recommendation = models.IntegerField(default=0)  # Store percentage (0-100)
+    application_status = models.CharField(
+        max_length=10,
+        choices=[('Pending', 'Pending'), ('Accepted', 'Accepted'), ('Rejected', 'Rejected')],
+        default='Pending'
+    )
     def __str__(self):
         return self.user.username
     

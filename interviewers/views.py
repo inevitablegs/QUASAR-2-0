@@ -315,3 +315,95 @@ def interviewer_analysis(request):
         'heatmap_path': heatmap_path if 'heatmap_path' in locals() else None,
         'emotion_analysis': emotion_analysis  # Pass stored emotion analysis
     })
+
+
+
+# @login_required
+# def update_application_status(request, candidate_id):
+#     candidate = get_object_or_404(CandidateProfile, id=candidate_id)
+
+#     if request.method == "POST":
+#         status = request.POST.get("status")
+#         candidate.application_status = status
+#         candidate.save()
+
+#         # Send email notification
+#         subject = "Your Interview Result - InsightHire"
+#         if status == "Accepted":
+#             message = f"Congratulations {candidate.user.first_name},\n\nYou have been selected for the next step in the hiring process! 🎉"
+#         else:
+#             message = f"Dear {candidate.user.first_name},\n\nUnfortunately, you were not selected for this position. We encourage you to apply again in the future!"
+
+#         send_mail(
+#             subject,
+#             message,
+#             "no-reply@insighthire.com",
+#             [candidate.user.email],
+#             fail_silently=False,
+#         )
+
+#     return redirect("analysis_page")
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from candidates.models import CandidateProfile
+import re
+
+def calculate_hiring_recommendation(overall_report):
+    """
+    Function to calculate hiring recommendation percentage based on the overall report.
+    This uses keyword detection to determine the score.
+    """
+    if not overall_report:
+        return 0  # No report, no recommendation
+
+    # Define weights based on keyword presence
+    keywords = {
+        "excellent": 90, "outstanding": 85, "strong": 80, "very good": 75,
+        "good": 70, "satisfactory": 60, "average": 50, "weak": 40,
+        "poor": 20, "unsatisfactory": 10
+    }
+
+    for word, score in keywords.items():
+        if re.search(rf"\b{word}\b", overall_report, re.IGNORECASE):
+            return score  # Assign the score based on the first keyword match
+
+    return 50  # Default neutral recommendation if no keyword matches
+
+
+@login_required
+def update_application_status(request, candidate_id):
+    candidate = get_object_or_404(CandidateProfile, id=candidate_id)
+
+    if request.method == "POST":
+        status = request.POST.get("status")
+        candidate.application_status = status
+
+        # Calculate hiring recommendation from overall report
+        candidate.hiring_recommendation = calculate_hiring_recommendation(candidate.overall_report)
+        candidate.save()
+
+        # Send email notification
+        subject = "Your Interview Result - InsightHire"
+        if status == "Accepted":
+            message = f"Congratulations {candidate.user.first_name},\n\nYou have been selected for the next step in the hiring process! 🎉"
+        else:
+            message = f"Dear {candidate.user.first_name},\n\nUnfortunately, you were not selected for this position. We encourage you to apply again in the future!"
+
+        send_mail(
+            subject,
+            message,
+            "no-reply@insighthire.com",
+            [candidate.user.email],
+            fail_silently=False,
+        )
+
+    return redirect(reverse('analysis_page', args=[candidate_id]))
+
+
+def analysis_page(request, candidate_id):
+    candidate = get_object_or_404(CandidateProfile, id=candidate_id)
+    return render(request, 'interviewers/analysis.html', {'candidate': candidate})

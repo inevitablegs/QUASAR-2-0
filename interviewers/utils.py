@@ -246,6 +246,19 @@ and also provide asked important question and candidate's answer.
 4. **Overall Impression:** Provide a qualitative summary of the candidate’s performance, supported by specific examples from their responses.  
 5. **Key Observations:** Highlight any notable strengths or weaknesses, explaining why they stood out.  
 
+**Answer Verification:**  
+For each question asked during the interview, verify whether the candidate's answer is correct or incorrect.  
+- If the answer is **correct**, provide a brief explanation of why it is accurate.  
+- If the answer is **incorrect**, clearly state which part of the answer is wrong and provide the correct information.  
+- If the answer is **partially correct**, break it down into:  
+  - **Correct Part:** Explain which portion of the answer is accurate.  
+  - **Incorrect Part:** Explain which portion of the answer is wrong and provide the correct information.  
+
+**Formatting Rules for Answer Verification:**  
+- Use bullet points for clarity.  
+- Clearly label each section as **Correct Part** and **Incorrect Part** for partially correct answers.  
+- Provide concise and professional explanations.  
+
 Please format your response in a detailed manner. Also, this is interviewer-tailored, so do not provide recommendations for the candidate.  
 
 """
@@ -267,7 +280,6 @@ Please format your response in a detailed manner. Also, this is interviewer-tail
     except Exception as e:
         print(f"❌ Error generating interview analysis: {e}")
         return f"Error generating interview analysis: {e}"
-
 
 
 
@@ -537,22 +549,30 @@ def generate_interview_analysis(emotion_data):
 
 def generate_overall_report(audio_analysis, emotion_analysis):
     """Generate an overall report combining audio and emotion analysis using Groq API."""
-    template = (
-        "You are an experienced interviewer tasked with generating an overall report for a candidate's performance during an interview. "
-        "Below are the results of the audio analysis and emotion analysis:\n\n"
-        "**Audio Analysis:**\n"
-        "{audio_analysis}\n\n"
-        "**Emotion Analysis:**\n"
-        "{emotion_analysis}\n\n"
-        "**Instructions for the Overall Report:**\n"
-        "1. Provide a general overview of the candidate's performance based on the combined analysis.\n"
-        "2. Highlight key strengths and weaknesses identified in both the audio and emotion analysis.\n"
-        "3. Suggest whether the candidate should be hired or not, based on their performance.\n"
-        "4. Provide a detailed explanation for your recommendation.\n"
-        "**Formatting Rules:**\n"
-        "- Organize your report into clear sections: 'Overview', 'Strengths and Weaknesses', 'Recommendation', and 'Explanation'.\n"
-        "- Be concise and professional in your analysis.\n"
-        "- Do not include any additional comments or explanations beyond the specified instructions.\n"
+    template = ("""You are an experienced interviewer tasked with generating an overall report for a candidate's performance during an interview.
+
+                    Below are the results of the audio analysis and emotion analysis:
+
+                    Audio Analysis:
+                    {audio_analysis}
+
+                    Emotion Analysis:
+                    {emotion_analysis}
+
+                    Instructions for the Overall Report:
+                    Provide a general overview of the candidate's performance based on the combined analysis.
+                    Highlight key strengths and weaknesses identified in both the audio and emotion analysis.
+                    Suggest a hiring recommendation percentage (0-100%) based on the candidate’s performance.
+                    Provide a detailed explanation for your recommendation.
+                    Formatting Rules:
+                    Organize your report into clear sections:
+                    Overview
+                    Strengths and Weaknesses
+                    Recommendation (Include a percentage-based hiring recommendation)
+                    Explanation
+                    Be concise and professional in your analysis.
+                    Do not include any additional comments or explanations beyond the specified instructions.
+                    """
     )
 
     # Format the template with the audio and emotion analysis

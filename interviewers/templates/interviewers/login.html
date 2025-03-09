@@ -5,45 +5,459 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interviewer Login | InsightHire</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+    <style>
+        :root {
+             /* Color Palette */
+             --primary-color: #0f766e;
+            --primary-color-light: #14b8a6;
+            --secondary-color: #f97316;
+            --secondary-color-light: #fdba74;
+            --background-color: #f0f4ff;
+            --text-color-dark: #1f2937;
+            --text-color-light: #ffffff;
+            --accent-color: #22c55e;
+            --accent-color-dark: #16a34a;
+            --error-color: #ef4444;
+            
+            /* Typography */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, var(--background-color) 0%, #ffe4d1 100%);
+            color: var(--text-color-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Navigation Styling */
+        nav {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+        }
+
+        .nav-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 2rem;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color-light);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Content Container */
+        .container {
+            display: flex;
+            flex: 1;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            margin: 2rem auto;
+            max-width: 1200px;
+            width: 95%;
+        }
+
+        /* Banner Section */
+        .banner {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-color-light));
+            color: var(--text-color-light);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at top right, 
+                rgba(255,255,255,0.1), 
+                transparent 50%);
+            transform: rotate(-15deg);
+            z-index: 1;
+        }
+
+        .banner h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .banner p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Form Section */
+        .form-section {
+            flex: 1.5;
+            padding: 3rem;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            color: var(--text-color-dark);
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            animation: shake 0.5s;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: var(--primary-color-light);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--text-color-dark);
+        }
+
+        .signup-link a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: var(--secondary-color-light);
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .footer-links a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s;
+            opacity: 0.8;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--secondary-color);
+        }
+
+        /* Mobile and Tablet Responsiveness */
+        @media screen and (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                max-width: 100%;
+                margin: 1rem auto;
+            }
+
+            .banner, .form-section {
+                width: 100%;
+                padding: 2.5rem;
+            }
+
+            .banner {
+                order: 2;
+                text-align: center;
+            }
+
+            .form-section {
+                order: 1;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .form-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .form-section {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .banner {
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        button:hover {
+            animation: pulse 1s infinite;
+        }
+
+        .logo-text {
+            position: relative;
+        }
+
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+
+        .logo:hover .logo-text::after {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h2>Interviewer Sign In</h2>
-    <p>Enter your credentials to access your interviewer dashboard</p>
-    
-    <form method="post">
-        {% csrf_token %}
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-text">InsightHire</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Left Side - Welcome Banner -->
+        <div class="banner">
+            <div>
+                <h1>Welcome Back, Interviewer</h1>
+                <p>Access your professional interviewing dashboard and connect with top talent.</p>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="form-section">
+            <div class="form-header">
+                <h2>Interviewer Sign In</h2>
+                <p>Enter your credentials to access your interviewer dashboard</p>
+            </div>
         
-        <div>
-            <label for="{{ form.username.id_for_label }}">Username</label>
-            <div>
-                {{ form.username }}
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">Username</label>
+                    <div>
+                        {{ form.username }}
+                    </div>
+                    {% if form.username.errors %}
+                    <div class="error-message">{{ form.username.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">Password</label>
+                    <div>
+                        {{ form.password }}
+                    </div>
+                    {% if form.password.errors %}
+                    <div class="error-message">{{ form.password.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+
+                {% if form.errors %}
+                <div class="error-message">
+                    <p>Please check your username and password</p>
+                </div>
+                {% endif %}
+        
+                <button type="submit">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <div class="signup-link">
+                    Don't have an account? 
+                    <a href="{% url 'interviewer_signup' %}">Sign up here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/privacy"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+                <a href="/terms"><i class="fas fa-file-contract"></i> Terms of Service</a>
+                <a href="/contact"><i class="fas fa-envelope"></i> Contact</a>
             </div>
-            {% if form.username.errors %}
-            <p>{{ form.username.errors|join:", " }}</p>
-            {% endif %}
+            
+            <p>&copy; 2025 InsightHire. All rights reserved.</p>
         </div>
+    </footer>
 
-        <div>
-            <label for="{{ form.password.id_for_label }}">Password</label>
-            <div>
-                {{ form.password }}
-            </div>
-            {% if form.password.errors %}
-            <p>{{ form.password.errors|join:", " }}</p>
-            {% endif %}
-        </div>
-
-        {% if form.errors %}
-        <div>
-            <p>Please check your username and password</p>
-        </div>
-        {% endif %}
-
-        <div>
-            <button type="submit">Login</button>
-        </div>
-    </form>
-
-    <p>Don't have an account? <a href="{% url 'interviewer_signup' %}">Sign up here</a></p>
+    <script>
+        // Client-side validation
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const username = document.getElementById('{{ form.username.id_for_label }}');
+            const password = document.getElementById('{{ form.password.id_for_label }}');
+            
+            if (username.value.trim() === '' || password.value.trim() === '') {
+                event.preventDefault();
+                
+                // Create or update error message
+                const errorContainer = document.querySelector('.error-message') || document.createElement('div');
+                errorContainer.className = 'error-message';
+                errorContainer.textContent = 'Please fill in all fields';
+                
+                if (!document.querySelector('.error-message')) {
+                    this.appendChild(errorContainer);
+                }
+                
+                // Apply shake animation to form
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = 'shake 0.5s';
+                }, 10);
+            }
+        });
+        
+        // Add fade-in animation to elements as they load
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.form-group, .form-header, .signup-link');
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                setTimeout(() => {
+                    element.style.transition = 'opacity 0.5s ease';
+                    element.style.opacity = '1';
+                }, 100 * index);
+            });
+        });
+    </script>
 </body>
 </html>

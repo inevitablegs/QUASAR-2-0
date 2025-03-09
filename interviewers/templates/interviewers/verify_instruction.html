@@ -2,11 +2,226 @@
 <html>
 <head>
     <title>Verify Your Email</title>
+    <style>
+        :root {
+            /* Color Variables */
+            --primary-teal: #008080;
+            --bright-teal: #00a0a0;
+            --dark-teal: #006666;
+            --light-teal: #e0f5f5;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --background-light: #f9f9f9;
+            --white: #ffffff;
+            --border-light: #eaeaea;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            
+            /* Animation Variables */
+            --transition-speed: 0.3s;
+            --animation-duration: 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--background-light);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 90%;
+            padding: 40px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            text-align: center;
+            animation: fadeIn var(--animation-duration) ease-out;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .container:hover {
+            box-shadow: 0 10px 25px var(--shadow-color);
+            transform: translateY(-5px);
+        }
+        
+        .icon-container {
+            margin-bottom: 25px;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .email-icon {
+            width: 80px;
+            height: 80px;
+            background-color: var(--light-teal);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-teal);
+            font-size: 40px;
+        }
+        
+        h2 {
+            color: var(--primary-teal);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+            animation: fadeIn var(--animation-duration) ease-out;
+            animation-delay: 0.1s;
+            animation-fill-mode: both;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: var(--text-secondary);
+            animation: fadeIn var(--animation-duration) ease-out;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+        
+        .login-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background-color: var(--bright-teal);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-link:hover {
+            background-color: var(--dark-teal);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 128, 128, 0.3);
+        }
+        
+        .login-link:active {
+            transform: translateY(1px);
+        }
+        
+        .login-link::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease-out;
+        }
+        
+        .login-link:hover::after {
+            transform: translateX(100%);
+        }
+        
+        .divider {
+            width: 80px;
+            height: 4px;
+            background-color: var(--light-teal);
+            margin: 30px auto;
+            border-radius: 2px;
+        }
+        
+        .steps {
+            text-align: left;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: var(--light-teal);
+            border-radius: 8px;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .steps:hover {
+            background-color: rgba(224, 245, 245, 0.7);
+            transform: scale(1.02);
+        }
+        
+        .step {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-color: var(--primary-teal);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .note {
+            font-style: italic;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Check Your Email</h2>
-    <p>We have sent a verification link to your email. Please check your inbox and click the link to activate your account.</p>
-    <p>If you don’t see the email, check your spam folder or try signing up again.</p>
-    <p>Once verified, you can <a href="{% url 'interviewer_login' %}">log in here</a>.</p>
+    <div class="container">
+        <div class="icon-container">
+            <div class="email-icon">✉️</div>
+        </div>
+        
+        <h2>Check Your Email</h2>
+        
+        <div class="steps">
+            <div class="step">
+                <span class="step-number">1</span>
+                <span>We've sent a verification email to your inbox</span>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <span>Click the verification link in the email</span>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <span>Your account will be activated instantly</span>
+            </div>
+        </div>
+        
+        <p>If you don't see the email within a few minutes, check your spam folder or try searching for emails from "InsightHire".</p>
+        
+        <p>Still having trouble? You can request a new verification email or contact our support team for assistance.</p>
+        
+        <div class="divider"></div>
+        
+        <p>Once your email is verified, you can start using all features of your account.</p>
+        
+        <a href="{% url 'interviewer_login' %}" class="login-link">Log In to Your Account</a>
+        
+        <p class="note">Note: The verification link will expire in 24 hours.</p>
+    </div>
 </body>
 </html>

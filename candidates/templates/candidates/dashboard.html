@@ -4,8 +4,539 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Candidate Dashboard | InsightHire</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-color: #0f766e;
+            --primary-color-light: #14b8a6;
+            --secondary-color: #f97316;
+            --secondary-color-light: #fdba74;
+            --background-color: #f0f4ff;
+            --text-color-dark: #1f2937;
+            --text-color-light: #ffffff;
+            --accent-color: #22c55e;
+            --accent-color-dark: #16a34a;
+            --error-color: #ef4444;
+            
+            /* Typography */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, var(--background-color) 0%, #e6eeff 100%);
+            color: var(--text-color-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Navigation Styling */
+        nav {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 2rem;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color-light);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: all 0.3s;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .profile-btn {
+            background-color: var(--secondary-color);
+            padding: 0.5rem 1.25rem !important;
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s;
+        }
+
+        .profile-btn:hover {
+            background-color: var(--secondary-color-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(249, 115, 22, 0.3);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color-light);
+            margin: 3px 0;
+            transition: 0.4s;
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 0;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .user-avatar i {
+            font-size: 3rem;
+            color: var(--text-color-light);
+        }
+
+        .user-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-role {
+            opacity: 0.8;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li a {
+            display: flex;
+            align-items: center;
+            color: var(--text-color-light);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu li a:hover, .nav-menu li a.active {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateX(10px);
+        }
+
+        .nav-menu li a i {
+            margin-right: 0.75rem;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: white;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .card {
+            background-color: var(--background-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .card-header h2 {
+            color: var(--primary-color);
+            margin-left: 0.5rem;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-color-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-color-light);
+        }
+
+        .resume-upload {
+            margin-bottom: 1rem;
+        }
+
+        .resume-upload .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .interview-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .interview-detail {
+            display: flex;
+            align-items: center;
+            opacity: 0.8;
+        }
+
+        .interview-detail i {
+            margin-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .interview-actions {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .no-interview, .no-resume {
+            text-align: center;
+            padding: 1rem;
+            background-color: rgba(156, 163, 175, 0.1);
+            border-radius: 0.5rem;
+        }
+
+        /* Apply Now Section */
+        .apply-now {
+            margin-bottom: 1.5rem;
+        }
+
+        .apply-now select {
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid #ccc;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .resume-info {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(34, 197, 94, 0.1);
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resume-info p {
+            color: var(--accent-color-dark);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .footer-links a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            margin: 0 1rem;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+
+            .dashboard-content {
+                order: 1;
+            }
+
+            .nav-menu {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: var(--primary-color);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 90;
+            }
+
+            .nav-links a {
+                margin: 1rem 0;
+                font-size: 1.2rem;
+            }
+
+            .nav-links.open {
+                display: flex;
+                animation: slideIn 0.3s ease-out;
+            }
+
+            .nav-menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .interview-details {
+                grid-template-columns: 1fr;
+            }
+
+            .interview-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .dashboard-header h1 {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .dashboard-header p {
+            animation: fadeIn 0.8s ease-out 0.2s both;
+        }
+
+        .card:nth-child(1) {
+            animation: fadeIn 0.8s ease-out 0.3s both;
+        }
+
+        .card:nth-child(2) {
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .card:nth-child(3) {
+            animation: fadeIn 0.8s ease-out 0.5s both;
+        }
+
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn:hover::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        .join-interview {
+            animation: pulse 2s infinite;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -39,9 +570,7 @@
                     </div>
                     <div>
                         <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
-
                         <div class="user-role">{{ candidate_profile.job_title|default:"Not Provided" }}</div>
-
                     </div>
                 </div>
                 
@@ -65,34 +594,30 @@
             <div class="dashboard-content">
                 <div class="dashboard-header">
                     <h1>Welcome back, {{ request.user.get_full_name|default:request.user.username }}!</h1>
-
                     <p>Here's your current progress and upcoming interviews.</p>
                 </div>
 
-                <!-- Apply Now Section -->
-                
-
-                <!-- candidates/templates/candidates/dashboard.html -->
+                <!-- External Website Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h2><i class="fas fa-globe"></i> External Website</h2>
+                        <i class="fas fa-globe"></i>
+                        <h2>External Website</h2>
                     </div>
                     <p>Click the button below to visit the external website:</p>
-                    <a href="http://localhost:3000" target="_blank" class="btn">
-                        <i class="fas fa-external-link-alt"></i> Visit Website
+                    <a href="http://localhost:3000" target="_blank" class="btn" style="margin-top: 1rem;">
+                        <i class="fas fa-external-link-alt"></i>&nbsp; Visit Website
                     </a>
                 </div>
-                    
-
 
                 <!-- Resume Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h2><i class="fas fa-file-alt"></i> Resume</h2>
+                        <i class="fas fa-file-alt"></i>
+                        <h2>Resume</h2>
                     </div>
-
-                    <div>
-                        <h2>Apply Now</h2>
+                    
+                    <div class="apply-now">
+                        <h3 style="margin-bottom: 0.75rem;">Apply Now</h3>
                         <form method="post">
                             {% csrf_token %}
                             <select name="company_name" required>
@@ -101,42 +626,40 @@
                                 <option value="{{ company }}">{{ company }}</option>
                                 {% endfor %}
                             </select>
-                            <button type="submit" name="apply_now">Apply</button>
+                            <button type="submit" name="apply_now" class="btn">Apply</button>
                         </form>
                     </div>
                     
                     <form method="post" enctype="multipart/form-data" class="resume-upload">
                         {% csrf_token %}
-                        <div>
-                            <h2>Upload Resume</h2>
-                            <form method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                                <button type="submit" name="upload_resume">Upload Resume</button>
-                            </form>
+                        <div class="form-group">
+                            <h3 style="margin-bottom: 0.75rem;">Upload Resume</h3>
+                            {{ form.as_p }}
+                            <button type="submit" name="upload_resume" class="btn">
+                                <i class="fas fa-upload"></i>&nbsp; Upload Resume
+                            </button>
                         </div>
                     </form>
                     
-                    
                     {% if candidate_profile.resume %}
-                        <div class="resume-info">
-                            <p><i class="fas fa-check-circle"></i> Your resume is ready</p>
-                            <a href="{% url 'download_resume' candidate_profile.user.id %}" class="btn">
-                                <i class="fas fa-download"></i> Download Resume
-                            </a>
-                        </div>
-                        {% else %}
-                        <div class="no-resume">
-                            <p>You haven't uploaded a resume yet.</p>
-                        </div>
-                        {% endif %}
-
+                    <div class="resume-info">
+                        <p><i class="fas fa-check-circle"></i> Your resume is ready</p>
+                        <a href="{% url 'download_resume' candidate_profile.user.id %}" class="btn">
+                            <i class="fas fa-download"></i>&nbsp; Download Resume
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="no-resume">
+                        <p>You haven't uploaded a resume yet.</p>
+                    </div>
+                    {% endif %}
                 </div>
                 
                 <!-- Interview Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h2><i class="fas fa-video"></i> Upcoming Interview</h2>
+                        <i class="fas fa-video"></i>
+                        <h2>Upcoming Interview</h2>
                     </div>
                     
                     {% if candidate_profile.meeting_link %}
@@ -159,11 +682,11 @@
                         </div>
                         
                         <div class="interview-actions">
-                            <a href="{{ candidate_profile.meeting_link }}" class="btn" target="_blank">
-                                <i class="fas fa-video"></i> Join Interview
+                            <a href="{{ candidate_profile.meeting_link }}" class="btn join-interview" target="_blank">
+                                <i class="fas fa-video"></i>&nbsp; Join Interview
                             </a>
                             <a href="/prepare/1234/" class="btn btn-secondary" style="margin-left: 1rem;">
-                                <i class="fas fa-brain"></i> Prepare with AI
+                                <i class="fas fa-brain"></i>&nbsp; Prepare with AI
                             </a>
                         </div>
                     </div>

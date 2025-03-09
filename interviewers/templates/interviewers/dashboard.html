@@ -2,171 +2,865 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interviewer Dashboard | InsightHire</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
-  </head>
-  <body>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-color: #0f766e;
+            --primary-color-light: #14b8a6;
+            --secondary-color: #f97316;
+            --secondary-color-light: #fdba74;
+            --background-color: #f0f4ff;
+            --text-color-dark: #1f2937;
+            --text-color-light: #ffffff;
+            --accent-color: #22c55e;
+            --accent-color-dark: #16a34a;
+            --error-color: #ef4444;
+            
+            /* Typography */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        input[type="datetime-local"] {
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 8px 12px;
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            background-color: white;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233498db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            cursor: pointer;
+        }
+
+        input[type="datetime-local"]:focus {
+            border-color: #2980b9;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, var(--background-color) 0%, #ffe4d1 100%);
+            color: var(--text-color-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Navigation Styling */
+        nav {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 2rem;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color-light);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: all 0.3s;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .profile-btn {
+            background-color: var(--secondary-color);
+            padding: 0.5rem 1.25rem !important;
+            border-radius: 6px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s;
+        }
+
+        .profile-btn:hover {
+            background-color: var(--secondary-color-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(15, 118, 110, 0.3);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-color-light);
+            margin: 3px 0;
+            transition: 0.4s;
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            display: flex;
+            padding: 2rem;
+            margin: 0 8rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
+            color: var(--text-color-light);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1rem;
+            box-shadow: 4px 0 12px rgba(0,0,0,0.1);
+            border-radius: 1rem 0 0 1rem;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar-header i {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a i {
+            margin-right: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateX(10px);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar-footer a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            margin: 0 0.5rem;
+        }
+
+        .sidebar-footer a:hover {
+            opacity: 1;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            flex-grow: 1;
+            background: white;
+            border-radius: 0 1rem 1rem 0;
+            box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 2rem auto;
+        }
+
+        .dashboard-content {
+            padding: 1rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 1rem;
+        }
+
+        .dashboard-header h1 {
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .dashboard-header h1 i {
+            margin-right: 1rem;
+            color: var(--primary-color-light);
+        }
+
+        .card {
+            background-color: var(--background-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .card-header h2 {
+            color: var(--primary-color);
+            margin-left: 0.5rem;
+        }
+
+        .resume-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .resume-item {
+            background-color: var(--background-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .resume-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .resume-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .resume-item h3 i {
+            margin-right: 0.75rem;
+            color: var(--secondary-color);
+        }
+
+        .resume-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            justify-content: space-between;
+            padding: 0 1rem;
+        }
+
+        .analyze-btn {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 0.25rem;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-color-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--secondary-color-light);
+        }
+
+        .interview-details {
+            background-color: #f9fafb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .interview-details h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .interview-details h4 i {
+            margin-right: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .interview-details a {
+            margin-left: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .interview-details a:hover {
+            text-decoration: underline;
+        }
+
+        .no-resume {
+            text-align: center;
+            color: #6b7280;
+            padding: 1rem;
+            background-color: #f3f4f6;
+            border-radius: 8px;
+        }
+
+        /* Analysis and Questions Styling */
+        .analysis-container {
+            position: relative;
+            margin-top: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .analysis-header {
+            background-color: #f8fafc;
+            padding: 0.75rem 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .analysis-header i {
+            margin-right: 0.75rem;
+        }
+        
+        .analysis-content {
+            max-height: 350px;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+        
+        /* Markdown Styling */
+        .markdown {
+            padding: 1rem;
+        }
+        
+        .markdown h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 1.5rem 0 1rem;
+            color: #0f766e;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        
+        .markdown h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.25rem 0 0.75rem;
+            color: #0d9488;
+        }
+        
+        .markdown h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1rem 0 0.5rem;
+            color: #14b8a6;
+        }
+        
+        .markdown h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0.75rem 0 0.5rem;
+            color: #0f766e;
+        }
+        
+        .markdown p {
+            margin-bottom: 1rem;
+        }
+        
+        .markdown ul, .markdown ol {
+            margin: 0.75rem 0 1rem 1.5rem;
+        }
+        
+        .markdown li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .markdown code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f1f5f9;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+        }
+        
+        .markdown pre {
+            background-color: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .markdown blockquote {
+            border-left: 4px solid #0f766e;
+            padding-left: 1rem;
+            color: #4b5563;
+            margin: 1rem 0;
+            font-style: italic;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background-color: #d1d5db;
+            color: #374151;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: var(--text-color-light);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .footer-links a {
+            color: var(--text-color-light);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s;
+            opacity: 0.8;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--secondary-color);
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+                margin: 0 2rem;
+            }
+
+            .sidebar {
+                width: 100%;
+                order: 1;
+                border-radius: 1rem 1rem 0 0;
+            }
+
+            .dashboard-container {
+                order: 2;
+                border-radius: 0 0 1rem 1rem;
+            }
+
+            .sidebar-menu {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background-color: var(--primary-color);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 100;
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .sidebar-menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .dashboard-content {
+                padding: 1rem;
+            }
+            .resume-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .resume-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .main-content {
+                margin: 0 1rem;
+                padding: 1rem;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-content > * {
+            animation: fadeIn 0.8s ease-out;
+        }
+    </style>
+</head>
+<body>
     <!-- Navigation -->
     <nav>
-      <div class="nav-container">
-        <a href="/" class="logo">
-          <span class="logo-text">InsightHire</span>
-        </a>
-        <div class="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <span class="logo-text">InsightHire</span>
+            </a>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links">
+                <a href="{% url 'interviewer_dashboard' %}" class="active">Dashboard</a>
+                <a href="/notfound/">Interviews</a>
+                <a href="/notfound/">Resources</a>
+                <a href="{% url 'interviewer_profile' %}" class="profile-btn">My Profile</a>
+            </div>
         </div>
-        <div class="nav-links">
-          <a href="{% url 'interviewer_dashboard' %}" class="active"
-            >Dashboard</a
-          >
-          <a href="/notfound/">Interviews</a>
-          <a href="/notfound/">Resources</a>
-          <a href="{% url 'interviewer_profile' %}" class="profile-btn"
-            >My Profile</a
-          >
-        </div>
-      </div>
     </nav>
 
-    <div>
-      <h1>Interviewer Dashboard</h1>
-      <p>Manage your candidate resumes, interviews, and evaluations.</p>
-    </div>
-
-    <div>
-      <h2><i class="fas fa-users"></i> Candidate Resumes</h2>
-
-      {% if candidates %}
-      <div>
-        {% for candidate in candidates %}
-        <div>
-          <h3>{{ candidate.user.username }}'s Resume</h3>
-          <a href="{% url 'view_candidate_profile' candidate.id %}" class="btn">
-            <i class="fas fa-user"></i> View Profile
-          </a>
-          {% if candidate.resume %}
-          <a href="{{ candidate.resume.url }}">
-            <i class="fas fa-download"></i> Download Resume
-          </a>
-
-          <div>
-            <!-- Form to generate questions -->
-            <form method="post">
-              {% csrf_token %}
-              <input
-                type="hidden"
-                name="resume_id"
-                value="{{ candidate.id }}"
-              />
-              <button type="submit" name="generate_questions">
-                <i class="fas fa-brain"></i> Generate Questions
-              </button>
-            </form>
-
-            <!-- Form to schedule a meeting -->
-            <form method="post">
-              {% csrf_token %}
-              <input
-                type="hidden"
-                name="resume_id"
-                value="{{ candidate.id }}"
-              />
-              <input type="datetime-local" name="start_time" required />
-              <button type="submit" name="schedule_meeting">
-                <i class="fas fa-calendar-plus"></i> Schedule Meeting
-              </button>
-            </form>
-          </div>
-
-          {% if candidate.meeting_link %}
-          <div>
-            <!-- Redirect to Analysis Page -->
-            <form method="get" action="{% url 'interviewer_analysis' %}">
-              <input
-                type="hidden"
-                name="resume_id"
-                value="{{ candidate.id }}"
-              />
-              <button type="submit">
-                <i class="fas fa-chart-line"></i> Analyze
-              </button>
-            </form>
-          </div>
-          {% endif %}
-
-          <!-- Display meeting link if available -->
-          {% if candidate.meeting_link %}
-          <div>
-            <i class="fas fa-video"></i> Meeting Link:
-            <a href="{{ candidate.meeting_link }}" target="_blank">
-              {{ candidate.meeting_link }}
-            </a>
-          </div>
-          {% endif %}
-
-          <!-- Display generated questions if available -->
-          {% if questions and candidate.id|stringformat:"s" in questions %}
-          <div>
-            <i class="fas fa-question-circle"></i> Generated Questions
-            <div>{{ questions|get_item:candidate.id|linebreaks|safe }}</div>
-          </div>
-          {% endif %} {% else %}
-          <p>No resume uploaded.</p>
-          {% endif %}
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-user-tie"></i>
+                <h2>Interviewer</h2>
+            </div>
+            
+            <div class="sidebar-footer">
+                <a href="/help">Help</a> • 
+                <a href="/privacy">Privacy</a>
+            </div>
         </div>
-        {% endfor %}
-      </div>
 
-      {% else %}
-      <p>No candidate resumes available.</p>
-      {% endif %}
+        <!-- Dashboard Container -->
+        <div class="dashboard-container">
+            <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1><i class="fas fa-user-tie"></i> Interviewer Dashboard</h1>
+                    <p>Manage your candidate resumes, interviews, and evaluations.</p>
+                </div>
+                
+                <!-- Candidate Resumes Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-users"></i>
+                        <h2>Candidate Resumes</h2>
+                    </div>
+                    
+                    {% if candidates %}
+                    <div class="resume-container">
+                        {% for candidate in candidates %}
+                        <div class="resume-item">
+                            <h3><i class="fas fa-user"></i> {{ candidate.user.username }}'s Resume</h3>
+                            
+                            <a href="{% url 'view_candidate_profile' candidate.id %}" class="btn">
+                                <i class="fas fa-user"></i> View Profile
+                            </a>
+                            
+                            {% if candidate.resume %}
+                            <a href="{{ candidate.resume.url }}" style="text-decoration: none; display: block; margin: 1rem 0;">
+                                <i class="fas fa-download"></i> Download Resume
+                            </a>
+                            
+                            <div class="resume-actions">
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+                                    <button type="submit" name="generate_questions" class="btn">
+                                        <i class="fas fa-brain"></i> Generate Questions
+                                    </button>
+                                </form>
+                                
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+                                    <input type="datetime-local" name="start_time" required style="margin-right: 0.5rem;">
+                                    <button type="submit" name="schedule_meeting" class="btn btn-secondary">
+                                        <i class="fas fa-calendar-plus"></i> Schedule Meeting
+                                    </button>
+                                </form>
+                            </div>
+
+                            {% if candidate.meeting_link %}
+                            <div class="interview-details">
+                                <h4><i class="fas fa-video"></i> Meeting Details</h4>
+                                <div>
+                                    Meeting Link: <br>
+                                    <a href="{{ candidate.meeting_link }}" target="_blank">
+                                        {{ candidate.meeting_link }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="analyze-btn">
+                                <form method="get" action="{% url 'interviewer_analysis' %}" style="display: inline;">
+                                    <input type="hidden" name="resume_id" value="{{ candidate.id }}">
+                                    <button type="submit" class="btn">
+                                        <i class="fas fa-chart-line"></i> Analyze
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
+                            
+                            {% if questions and candidate.id|stringformat:"s" in questions %}
+                            <div class="analysis-container">
+                                <div class="analysis-header">
+                                    <i class="fas fa-question-circle"></i> Generated Questions
+                                    <button class="copy-btn"
+                                            onclick="copyToClipboard(this, '{{ questions|get_item:candidate.id }}')">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                                <div class="analysis-content">
+                                    <div class="markdown">
+                                        {{ questions|get_item:candidate.id|safe }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% else %}
+                            <p class="no-resume">
+                                <i class="fas fa-exclamation-circle"></i> No resume uploaded.
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="no-resume">
+                        <p>No candidate resumes available.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
     <footer>
-      <div class="footer-content">
-        <p>&copy; 2025 InsightHire. All rights reserved.</p>
-        <div class="footer-links">
-          <a href="/privacy/">Privacy Policy</a>
-          <a href="/terms/">Terms of Service</a>
-          <a href="/contact/">Contact Us</a>
+        <div class="footer-content">
+            <p>&copy; 2025 InsightHire. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="/privacy/">Privacy Policy</a>
+                <a href="/terms/">Terms of Service</a>
+                <a href="/contact/">Contact Us</a>
+            </div>
         </div>
-      </div>
     </footer>
 
-    <!-- JavaScript for hamburger menu -->
+    <!-- JavaScript -->
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const hamburger = document.querySelector(".hamburger");
-        const navLinks = document.querySelector(".nav-links");
+        document.addEventListener('DOMContentLoaded', function() {
+            // Responsive navigation menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (hamburger) {
+                hamburger.addEventListener('click', function() {
+                    hamburger.classList.toggle('open');
+                    navLinks.classList.toggle('open');
+                    
+                    if (navLinks.classList.contains("open")) {
+                        document.body.style.overflow = "hidden";
+                    } else {
+                        document.body.style.overflow = "";
+                    }
+                });
+            }
+            
+            // Close menu when clicking on a link
+            const links = document.querySelectorAll(".nav-links a");
+            links.forEach((link) => {
+                link.addEventListener("click", function () {
+                    hamburger.classList.remove("open");
+                    navLinks.classList.remove("open");
+                    document.body.style.overflow = "";
+                });
+            });
+            
+            // Function to format markdown
+            function formatMarkdown() {
+                const markdownContainers = document.querySelectorAll('.markdown');
 
-        // Toggle menu when hamburger is clicked
-        hamburger.addEventListener("click", function () {
-          hamburger.classList.toggle("open");
-          navLinks.classList.toggle("open");
+                markdownContainers.forEach(container => {
+                    let content = container.textContent.trim(); // Get raw markdown text
+                    container.innerHTML = marked.parse(content); // Convert markdown to HTML
+                });
+            }
 
-          if (navLinks.classList.contains("open")) {
-            document.body.style.overflow = "hidden";
-          } else {
-            document.body.style.overflow = "";
-          }
+            // Run markdown formatting on page load
+            formatMarkdown();
+            
+            // Copy to clipboard function
+            window.copyToClipboard = function(button, text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-check"></i> Copied';
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                    }, 2000);
+                });
+            };
         });
-
-        // Close menu when clicking on a link
-        const links = document.querySelectorAll(".nav-links a");
-        links.forEach((link) => {
-          link.addEventListener("click", function () {
-            hamburger.classList.remove("open");
-            navLinks.classList.remove("open");
-            document.body.style.overflow = "";
-          });
-        });
-      });
     </script>
-  </body>
+</body>
 </html>

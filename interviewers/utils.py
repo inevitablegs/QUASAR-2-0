@@ -545,34 +545,27 @@ def generate_interview_analysis(emotion_data):
 
 
 
+import re
 
-
-def generate_overall_report(audio_analysis, emotion_analysis):
+# interviewers/utils.py
+def generate_overall_report(audio_analysis, emotion_analysis, candidate):
     """Generate an overall report combining audio and emotion analysis using Groq API."""
-    template = ("""You are an experienced interviewer tasked with generating an overall report for a candidate's performance during an interview.
-
-                    Below are the results of the audio analysis and emotion analysis:
-
-                    Audio Analysis:
-                    {audio_analysis}
-
-                    Emotion Analysis:
-                    {emotion_analysis}
-
-                    Instructions for the Overall Report:
-                    Provide a general overview of the candidate's performance based on the combined analysis.
-                    Highlight key strengths and weaknesses identified in both the audio and emotion analysis.
-                    Suggest a hiring recommendation percentage (0-100%) based on the candidate’s performance.
-                    Provide a detailed explanation for your recommendation.
-                    Formatting Rules:
-                    Organize your report into clear sections:
-                    Overview
-                    Strengths and Weaknesses
-                    Recommendation (Include a percentage-based hiring recommendation)
-                    Explanation
-                    Be concise and professional in your analysis.
-                    Do not include any additional comments or explanations beyond the specified instructions.
-                    """
+    template = (
+        "You are an experienced interviewer tasked with generating an overall report for a candidate's performance during an interview. "
+        "Below are the results of the audio analysis and emotion analysis:\n\n"
+        "**Audio Analysis:**\n"
+        "{audio_analysis}\n\n"
+        "**Emotion Analysis:**\n"
+        "{emotion_analysis}\n\n"
+        "**Instructions for the Overall Report:**\n"
+        "1. Provide a general overview of the candidate's performance based on the combined analysis.\n"
+        "2. Highlight key strengths and weaknesses identified in both the audio and emotion analysis.\n"
+        "3. Suggest a hiring recommendation percentage (0-100%) based on the candidate’s performance.\n"
+        "4. Provide a detailed explanation for your recommendation.\n"
+        "**Formatting Rules:**\n"
+        "- Organize your report into clear sections: 'Overview', 'Strengths and Weaknesses', 'Recommendation (Include a percentage-based hiring recommendation)', and 'Explanation'.\n"
+        "- Be concise and professional in your analysis.\n"
+        "- Do not include any additional comments or explanations beyond the specified instructions.\n"
     )
 
     # Format the template with the audio and emotion analysis
@@ -597,8 +590,23 @@ def generate_overall_report(audio_analysis, emotion_analysis):
             response_chunks.append(chunk)
 
         # Join all chunks into a complete response
-        full_response = "".join(response_chunks)
-        return full_response.strip()
+        full_response = "".join(response_chunks).strip()
+
+        # Extract the hiring recommendation percentage from the response
+        hiring_recommendation = None
+        if "Recommendation" in full_response:
+            # Extract the percentage from the recommendation section
+            recommendation_section = full_response.split("Recommendation")[1]
+            percentage_match = re.search(r'\d+%', recommendation_section)
+            if percentage_match:
+                hiring_recommendation = float(percentage_match.group().replace('%', ''))
+
+        # Save the hiring recommendation percentage to the candidate profile
+        if hiring_recommendation is not None:
+            candidate.hiring_recommendation = hiring_recommendation
+            candidate.save()
+
+        return full_response
 
     except Exception as e:
         return f"Error generating overall report: {e}"

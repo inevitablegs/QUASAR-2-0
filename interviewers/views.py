@@ -10,7 +10,7 @@ from .utils import generate_interview_questions, schedule_meeting, transcribe_au
 from django.urls import reverse_lazy
 
 
-import os
+import re
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
@@ -230,13 +230,10 @@ def interviewer_analysis(request):
     resume_id = request.GET.get('resume_id')
 
     if not resume_id:
-        # Redirect back if no candidate is selected
         return redirect('interviewer_dashboard')
 
     candidate = get_object_or_404(CandidateProfile, id=resume_id)
-    heatmap_path = None  # Initialize heatmap_path
-
-    # ✅ Load stored emotion analysis if available
+    heatmap_path = None
     emotion_analysis = candidate.emotion_analysis if candidate.emotion_analysis else None
 
     if request.method == 'POST':
@@ -296,24 +293,21 @@ def interviewer_analysis(request):
                 # ✅ Use stored emotion analysis if available
                 emotion_analysis = candidate.emotion_analysis if candidate.emotion_analysis else "No emotion analysis available."
 
-                # ✅ Generate the overall report
-                overall_report = generate_overall_report(
-                    audio_analysis, emotion_analysis)
+                # ✅ Generate the overall report and save the hiring recommendation
+                overall_report = generate_overall_report(audio_analysis, emotion_analysis, candidate)
 
                 # ✅ Save the overall report persistently
                 candidate.overall_report = overall_report
                 candidate.save()
 
-    # ✅ Fetch analysis results for the selected candidate only
-    recordings = InterviewRecording.objects.filter(
-        candidate_name=candidate.user.username)
+    # Fetch analysis results for the selected candidate only
+    recordings = InterviewRecording.objects.filter(candidate_name=candidate.user.username)
 
     return render(request, 'interviewers/analysis.html', {
         'candidate': candidate,
         'recordings': recordings,
-        # Pass heatmap if available
         'heatmap_path': heatmap_path if 'heatmap_path' in locals() else None,
-        'emotion_analysis': emotion_analysis  # Pass stored emotion analysis
+        'emotion_analysis': emotion_analysis
     })
 
 

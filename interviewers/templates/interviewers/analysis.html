@@ -97,7 +97,10 @@
             <p>{{ candidate.overall_report|linebreaks }}</p>
         {% endif %}
 
-        <h3>Hiring Recommendation: {{ candidate.hiring_recommendation }}%</h3>
+        <!-- interviewers/templates/interviewers/analysis.html -->
+        {% if candidate.hiring_recommendation %}
+        <h4>Hiring Recommendation: {{ candidate.hiring_recommendation }}%</h4>
+        {% endif %}
 
         <form method="post" action="{% url 'update_application_status' candidate.id %}">
             {% csrf_token %}
